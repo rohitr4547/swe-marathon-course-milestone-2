@@ -496,7 +496,14 @@ class Rule:
         elif issubclass(etype, Fail):
             self.c.record(self.rid, False, f"{self.desc}: {exc}")
         else:
-            self.c.record(self.rid, False, f"{self.desc}: check crashed on the response ({etype.__name__}: {exc})")
+            msg = str(exc)
+            # Browser timeouts bury the element they waited for deep in a long message; surface it first.
+            loc = re.search(r"waiting for (locator\([^\n]*?\))", msg)
+            if loc:
+                why = f"timed out waiting for {loc.group(1)} (it is missing, hidden or disabled)"
+            else:
+                why = f"check crashed on the response ({etype.__name__}: {msg.splitlines()[0] if msg else ''})"
+            self.c.record(self.rid, False, f"{self.desc}: {why}")
         return True
 
 
