@@ -52,7 +52,8 @@ def e1(c):
         r.status(api("PATCH", f"/api/messages/{m['id']}", {"body": "owner edit"}, owner.token), 403)
         for body in ({"body": ""}, {"body": "   "}, {"body": None}, {"body": 7}, {}):
             r.status(api("PATCH", f"/api/messages/{m['id']}", body, mem.token), 400)
-        r.status(raw_post(f"/api/channels/{ch}/messages", b"{oops", mem.token), 400)
+        st = raw_post(f"/api/channels/{ch}/messages", b"{oops", mem.token)
+        r.check(st == 400, f"a body that is not valid JSON got {st}, expected 400")
     with c.rule("E1.3", "DELETE by the author or the workspace owner: 200 {deleted: true}; again 200; anyone else 403") as r:
         m1, m2 = must_post(mem, ch, "delete me"), must_post(mem, ch, "owner deletes me")
         r.status(api("DELETE", f"/api/messages/{m1['id']}", token=other.token), 403)
