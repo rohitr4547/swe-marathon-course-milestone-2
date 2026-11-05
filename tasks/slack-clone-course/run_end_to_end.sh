@@ -104,7 +104,7 @@ while [ $# -gt 0 ]; do
     *) ARGS+=("$1"); shift ;;
   esac
 done
-set -- "${ARGS[@]}"
+set -- ${ARGS[@]+"${ARGS[@]}"}
 
 AGENT_LLM_CONFIG_DIR="$TASK/course-staff-files/final_task/agent_llm_config"
 
