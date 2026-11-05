@@ -586,11 +586,18 @@ def run(groups, argv, usage, labels=None):
     for g in todo:
         missing = [rid for rid in g[2] if rid not in c.done]
         note = notes.get(g[0], "the group stopped before reaching these rules")
+        if missing and c.mode == "regression":
+            # One line per group, so a mostly unbuilt app cannot push the output past the transcript cut-off.
+            c.failed += len(missing)
+            c.done.update(missing)
+            rng = missing[0] if len(missing) == 1 else f"{missing[0]} to {missing[-1]}"
+            print(f"REGRESSION FAIL {c.labels.get(g[0][0], g[0][0])} {rng} not run ({len(missing)} rules): {short(note, 120)}", flush=True)
+            continue
         if missing and note not in printed:
             c.say(f"NOTE {g[0]}: {short(note, 220)}")
             printed.add(note)
         for rid in missing:
-            c.record(rid, False, f"not run ({short(note, 90)})" if c.mode == "regression" else f"not run (see NOTE above for {g[0]})")
+            c.record(rid, False, f"not run (see NOTE above for {g[0]})")
     if c.mode == "regression":
         print(f"REGRESSION: {c.failed} broken", flush=True)
     else:

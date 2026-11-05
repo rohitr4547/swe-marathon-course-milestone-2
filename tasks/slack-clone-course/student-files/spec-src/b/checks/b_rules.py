@@ -9,7 +9,7 @@ import time
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "common"))
 import threading  # noqa: E402
 
-from checklib import (CHANNEL_FIELDS, ISO_UTC, MESSAGE_FIELDS, USER_FIELDS, WS, Fail, api, baseline_ids,  # noqa: E402
+from checklib import (run, CHANNEL_FIELDS, ISO_UTC, MESSAGE_FIELDS, USER_FIELDS, WS, Fail, api, baseline_ids,  # noqa: E402
                       baseline_rules, crash_rule, events_text, join, make_channel, make_workspace,
                       must_join, must_post, post, q, raw_post, register, same, uniq)
 
@@ -541,3 +541,8 @@ GROUPS = [
     ("B4", b4, [f"B4.{i}" for i in range(1, 8)], None),
     ("B5", b5, [f"B5.{i}" for i in range(1, 10)], None),
 ]
+STEPS = {"1": ('B0', 'B1'), "2": ('B2',), "3": ('B3',), "4": ('B4',), "5": ('B5',), "all": tuple(g[0] for g in GROUPS)}
+
+if __name__ == "__main__":
+    step, rest = sys.argv[1], sys.argv[2:]
+    run([g for g in GROUPS if g[0] in STEPS[step]], rest, f"bash /spec/b/checks/check_b_{step}.sh [{' '.join(STEPS[step])}]")

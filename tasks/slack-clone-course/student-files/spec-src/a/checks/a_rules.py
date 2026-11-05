@@ -9,7 +9,7 @@ import time
 from types import SimpleNamespace
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "common"))
-from checklib import (PW, USER_FIELDS, WORKSPACE_FIELDS, Fail, api, baseline_ids, baseline_rules,  # noqa: E402
+from checklib import (run, PW, USER_FIELDS, WORKSPACE_FIELDS, Fail, api, baseline_ids, baseline_rules,  # noqa: E402
                       crash_rule, join, make_channel, make_workspace, must_join, raw_post, register, roles_of,
                       same, set_role, uniq)
 
@@ -345,3 +345,8 @@ GROUPS = [
     ("A3", a3, [f"A3.{i}" for i in range(1, 12)], None),
     ("A4", a4, [f"A4.{i}" for i in range(1, 12)], None),
 ]
+STEPS = {"1": ('A0', 'A1'), "2": ('A2',), "3": ('A3',), "4": ('A4',), "all": tuple(g[0] for g in GROUPS)}
+
+if __name__ == "__main__":
+    step, rest = sys.argv[1], sys.argv[2:]
+    run([g for g in GROUPS if g[0] in STEPS[step]], rest, f"bash /spec/a/checks/check_a_{step}.sh [{' '.join(STEPS[step])}]")
