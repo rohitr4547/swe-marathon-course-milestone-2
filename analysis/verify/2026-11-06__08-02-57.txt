@@ -1,0 +1,29 @@
+cluster up: 8000 8001 8002 answer /api/health
+  check_a_1.sh: RESULT: 17 passed, 0 failed
+  check_a_2.sh: RESULT: 9 passed, 0 failed
+  check_a_3.sh: RESULT: 11 passed, 0 failed
+  check_a_4.sh: RESULT: 11 passed, 0 failed
+A: 48 passed, 0 failed
+  check_b_1.sh: RESULT: 18 passed, 0 failed
+  check_b_2.sh: RESULT: 11 passed, 0 failed
+  check_b_3.sh: RESULT: 7 passed, 0 failed
+  check_b_4.sh: RESULT: 7 passed, 0 failed
+  check_b_5.sh: RESULT: 9 passed, 0 failed
+B: 52 passed, 0 failed
+  check_c_1.sh: RESULT: 9 passed, 0 failed
+  check_c_2.sh: RESULT: 8 passed, 0 failed
+  check_c_3.sh: RESULT: 6 passed, 0 failed
+  check_c_4.sh: RESULT: 7 passed, 0 failed
+  check_c_5.sh: RESULT: 4 passed, 0 failed
+C: 34 passed, 0 failed
+  check_d_1.sh: RESULT: 8 passed, 0 failed
+  check_d_2.sh: RESULT: 3 passed, 0 failed
+  check_d_3.sh: RESULT: 3 passed, 0 failed
+D: 14 passed, 0 failed
+  check_e_1.sh: RESULT: 9 passed, 0 failed
+  check_e_2.sh: RESULT: 5 passed, 0 failed
+  check_e_3.sh: RESULT: 4 passed, 0 failed
+  check_e_4.sh: RESULT: 5 passed, 0 failed
+  check_e_5.sh: RESULT: 7 passed, 0 failed
+  check_e_6.sh: RESULT: 7 passed, 0 failed
+E: 37 passed, 0 failed

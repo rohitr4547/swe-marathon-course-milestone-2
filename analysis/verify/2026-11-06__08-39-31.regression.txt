@@ -1,0 +1,53 @@
+cluster up: 8000 8001 8002 answer /api/health
+REGRESSION FAIL roles A0.7 Component A routes return 401 with no token and with a bogus token: expected 401 for PATCH /api/workspaces/nope none->405; PATCH /api/workspaces/nope bogus->405...
+REGRESSION FAIL roles A0.8 errors and successes are JSON objects with Content-Type application/json: 401 body/Content-Type was 'text/plain; charset=utf-8' '401: Unauthorized'
+REGRESSION FAIL roles A2.1 POST /api/workspaces returns 201 {workspace, general_channel}; join_mode open; caller is owner: workspace is missing ['join_mode']
+REGRESSION FAIL roles A3.1 the owner promotes members to admin: 200 {member: {user_id, role}}: expected 200, got 404 404: Not Found
+REGRESSION FAIL roles A3.2 an admin can move a non-admin between member and guest: expected 200, got 404 404: Not Found
+REGRESSION FAIL roles A3.3 an admin changing another admin or the owner gets 403: expected 403, got 404 404: Not Found
+REGRESSION FAIL roles A3.4 role 'owner', an unknown role, or a missing role returns 400: expected 400, got 404 404: Not Found
+REGRESSION FAIL roles A3.5 the owner cannot change their own role via PATCH (403): expected 403, got 404 404: Not Found
+REGRESSION FAIL roles A3.6 a member or guest changing roles gets 403: expected 403, got 404 404: Not Found
+REGRESSION FAIL roles A3.8 a guest cannot join a public channel or create a channel (403): expected 403, got 200 {"channel": {"id": 3, "workspace_id": 2, "name": "pub855436751598", "is_pr...
+REGRESSION FAIL roles A3.9 a member creates public channels but not private ones (403); an admin creates private ones: expected 403, got 201 {"channel": {"id": 5, "workspace_id": 2, "name...
+REGRESSION FAIL roles A3.10 transfer_ownership: an admin caller gets 403; a non-admin target gets 400: expected 403, got 404 404: Not Found
+REGRESSION FAIL roles A3.11 transfer to an admin: 200; target becomes owner (owner_id too), previous owner becomes admin: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B0.7 Component B routes return 401 with no token and with a bogus token: expected 401 for POST /api/channels/999999999/leave none->404; POST /api/channels/999999999/...
+REGRESSION FAIL channels B0.8 unknown channel or message ids return 404 with a valid token: expected 404 for GET /api/channels/999999999/members->200; GET /api/messages/999999999/replies->20...
+REGRESSION FAIL channels B1.1 create channel: 201 {channel} with every ChannelObj field; topic '' and 'description' ignored: channel is missing ['is_archived']
+REGRESSION FAIL channels B1.2 topic of 250 chars is accepted at create; 251 chars returns 400: expected 400, got 201 {"channel": {"id": 10, "workspace_id": 4, "name": "t85543815dc84", "is_pr...
+REGRESSION FAIL channels B1.3 a duplicate name returns 409; bad names (space, uppercase, 33 chars, empty) return 400: expected 400 for 'bad name'->201, 'UPPER'->201, 'xxxxxxxxxxxx'->201, ''-...
+REGRESSION FAIL channels B1.4 GET /api/workspaces/{slug}: 200 {workspace, channels, read_state}; hides others' private channels: a private channel is shown to a non-member
+REGRESSION FAIL channels B1.5 archived channels are omitted unless ?include_archived=1 or ?include_archived=true: archived channel missing with include_archived=1
+REGRESSION FAIL channels B1.6 PATCH topic: channel member or workspace owner 200 {channel}; other member 403; 251 chars 400: expected 403, got 200 {"channel": {"id": 17, "workspace_id": 4, "...
+REGRESSION FAIL channels B1.8 leave returns 200 {channel}, again 200 (idempotent), and removes the member: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B1.9 a user who joins the workspace through another channel is also added to #general: new workspace member (or the owner) is not in #general
+REGRESSION FAIL channels B1.10 archive/unarchive are owner-only; writes to an archived channel return 423 until unarchived: expected 403, got 200 {"channel": {"id": 17, "workspace_id": 4, "na...
+REGRESSION FAIL channels B2.3 workspace members may post in public channels; outsiders and private non-members get 403: expected 201, got 403 {"error": "forbidden"}
+REGRESSION FAIL channels B2.4 GET messages pages newest-first with next_cursor; null on the last page: page 1 was ['p5', 'p4'], next_cursor None
+REGRESSION FAIL channels B2.5 a cursor issued by 8000 gives the same page on 8001 and 8002: no cursor from B2.4
+REGRESSION FAIL channels B2.6 a cursor still resumes from the same place after new messages arrive: no cursor from B2.4
+REGRESSION FAIL channels B2.7 limit defaults to 50 when omitted: got 50 messages
+REGRESSION FAIL channels B2.8 limit 0, 201, -1 or 'abc' returns 400; limit 200 is accepted: expected 400, got 200 {"messages": [], "next_cursor": null}
+REGRESSION FAIL channels B2.9 a malformed or made-up cursor returns 400: expected 400, got 200 {"messages": [{"id": 6, "channel_id": 20, "author_id": 27, "author": {"id": 27, "username"...
+REGRESSION FAIL channels B2.10 offset pagination is rejected: ?offset= or ?page= returns 400: expected 400, got 200 {"messages": [{"id": 6, "channel_id": 20, "author_id": 27, "author": {"id":...
+REGRESSION FAIL channels B2.11 replies: oldest-first and paged; parent reply_count counts them; replies stay out of the channel list: expected 201, got 403 {"error": "forbidden"}
+REGRESSION FAIL channels B3.1 POST /api/messages/{id}/pin: 200 {pin: {message_id, pinned_by, pinned_at}}; repeat is idempotent: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B3.2 GET pins: newest-first [{message, pinned_by, pinned_at}], paged with next_cursor; bad cursor 400: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B3.3 DELETE /api/messages/{id}/pin: 200 {unpinned: true}; the pin leaves the list: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B3.4 non-members of a private channel get 403 on its pin list: expected 403, got 200 {"pins": [], "next_cursor": null}
+REGRESSION FAIL channels B3.5 search: 200 {results, next_cursor} newest-first, case-insensitive, accessible channels only: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B3.6 search workspace_id=<id> limits results to that workspace: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B3.7 search pages with limit/cursor; limit=0 or a missing q returns 400: limit=1 should give one result and a cursor
+REGRESSION FAIL channels B4.4 every Spec B write kind is broadcast once, in order, each advancing event_id by exactly 1: POST /api/channels/27/leave got 404 404: Not Found
+REGRESSION FAIL channels B4.5 no-op writes (join when joined, leave when left) emit no event: got message.reply#6, message.created#7
+REGRESSION FAIL channels B4.6 resume on another node replays events after since_event_id in order, sends 'resumed', then streams live: replayed message.created#1, message.created#2, message....
+REGRESSION FAIL channels B5.4 GET read: 200 {read_state: {channel_id, last_read_event_id 0, unread_count 3, mention_count 1}}: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B5.5 POST read moves the cursor forward and recounts; an older event_id never moves it back: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B5.6 the reader's own messages, even self-mentions, add no unread or mention counts: read_state was {}
+REGRESSION FAIL channels B5.7 GET /api/workspaces/{slug} read_state is a list holding the same object for each channel: read_state is dict, expected a list
+REGRESSION FAIL channels B5.8 POST read with a non-integer returns 400; private-channel non-members get 403: expected 400, got 404 404: Not Found
+REGRESSION FAIL channels B5.9 wrong JSON types or a malformed JSON body on Spec B routes return 400, never 500: expected 400 for POST workspaces/ws85547953e6e7/ch {'name': 'ty855481433781', ...
+REGRESSION FAIL roles A2.2 to A2.9 not run (8 rules): setup: workspace creation failed (A2.1)
+REGRESSION FAIL roles A4.1 to A4.11 not run (11 rules): setup: could not make an admin (A3.1)
+REGRESSION: 68 broken

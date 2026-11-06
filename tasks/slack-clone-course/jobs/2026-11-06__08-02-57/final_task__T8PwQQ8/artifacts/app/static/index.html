@@ -1,0 +1,129 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Huddle</title><style>
+*{box-sizing:border-box}body{margin:0;font:14px Arial;color:#1d1c1d}button{border:0;border-radius:4px;padding:9px 14px;color:#fff;cursor:pointer;background-image:none}[data-button-role="primary"]{background-color:#007a5a;color:#fff;background-image:none}[data-button-role="danger"]{background-color:#e01e5a;color:#fff;background-image:none}[data-button-role="secondary"]{background-color:#1264a3;color:#fff;background-image:none}input,select,textarea{padding:9px;border:1px solid #bbb;border-radius:3px}.hidden{display:none!important}.layout{display:flex;height:100vh}.sidebar{width:245px;background:#3f0e40;color:#fff;padding:18px}.content{flex:1;padding:24px}.thread{width:320px;border-left:1px solid #ddd;padding:18px}.entry{padding:9px;border-radius:4px;cursor:pointer}.entry:hover{background:#542454}.message{padding:12px;border-bottom:1px solid #eee;position:relative}.toolbar{display:none}.message:hover .toolbar{display:block}.toolbar button{background:#eee;color:#222;padding:4px;margin:2px}.avatar{display:inline-flex;background:#ddd;border-radius:50%;width:25px;height:25px;align-items:center;justify-content:center;margin-right:6px}.picker{display:grid;grid-template-columns:repeat(4,40px);position:absolute;background:white;border:1px solid #aaa;padding:6px;z-index:3}.picker button{background:white;color:#222;font-size:20px;padding:5px}.modal{display:none}
+</style></head><body>
+<div id="auth-modal"><form data-testid="auth-form"><h1>Huddle</h1><input name="username" placeholder="Username"><input name="password" type="password" placeholder="Password"><input name="display_name" placeholder="Display name"><button id="auth-submit" data-testid="auth-submit" data-button-role="primary">Sign up</button><button type="button" id="auth-toggle" data-testid="auth-toggle" data-button-role="secondary">Login</button><div data-testid="auth-error" id="auth-error"></div></form></div>
+<div id="app" class="hidden"><div class="layout"><aside id="sidebar" data-testid="sidebar" class="sidebar"><h2 data-testid="workspace-header">Huddle</h2><div data-testid="current-user"></div><button id="logout-btn" data-testid="logout-btn" data-button-role="danger">Logout</button><h3>Channels</h3><div id="channel-list" data-testid="channel-list"></div><div id="dms-list" data-testid="dms-list"></div><button id="new-channel-btn" data-testid="new-channel-btn" data-button-role="secondary">New channel</button><form id="workspace-create-form" data-testid="workspace-create-form"><input name="slug" placeholder="workspace slug"><input name="name" placeholder="workspace name"><button type="button" id="empty-state-create-workspace" data-testid="empty-state-create-workspace" data-button-role="primary">Create workspace</button><button type="submit" id="workspace-create-submit">Create</button></form><form data-testid="join-workspace-form"><input name="slug" placeholder="join workspace"><button id="join-workspace-submit" data-testid="join-workspace-submit" data-button-role="primary">Join</button><div data-testid="join-workspace-error"></div></form></aside>
+<main class="content"><header><h2 id="channel-title" data-testid="channel-title">#general</h2><div id="channel-topic" data-testid="channel-topic"></div><button id="workspace-settings-btn" data-testid="workspace-settings-btn" data-button-role="secondary">Workspace settings</button><button id="channel-settings-btn" data-testid="channel-settings-btn" data-button-role="secondary">Channel settings</button></header><div id="message-list" data-testid="message-list"><div id="channel-empty-state" data-testid="channel-empty-state">No messages yet. Start the conversation.</div></div><form id="message-form"><input id="message-input" data-testid="message-input" name="body" autocomplete="off"><button id="send-btn" data-testid="send-btn" data-button-role="primary">Send</button></form></main>
+<aside id="thread-panel" data-testid="thread-panel" class="thread hidden"><button id="close-thread" data-testid="close-thread" data-button-role="secondary">Close</button><div id="thread-messages"></div><form><input id="thread-input" data-testid="thread-input"><button id="thread-send" data-testid="thread-send" data-button-role="primary">Reply</button></form></aside></div></div>
+<div id="create-channel-modal" class="modal"><form id="create-channel-form" data-testid="create-channel-form"><input name="name"><label><input id="create-channel-private" data-testid="create-channel-private" type="checkbox">Private</label><button id="create-channel-submit" data-testid="create-channel-submit" data-button-role="primary">Create</button><button id="create-channel-cancel" data-testid="create-channel-cancel" data-button-role="secondary">Cancel</button><div data-testid="create-channel-error"></div></form></div>
+<div id="channel-settings-modal" class="modal"><h3 data-testid="channel-settings-title">Channel settings</h3><button id="channel-settings-close" data-testid="channel-settings-close" data-button-role="secondary">Close</button><div id="channel-members-list" data-testid="channel-members-list"></div><form id="channel-add-member-form" data-testid="channel-add-member-form"><input id="channel-add-member-input" data-testid="channel-add-member-input"><button id="channel-add-member-submit" data-testid="channel-add-member-submit" data-button-role="primary">Add member</button></form><input id="channel-topic-input" data-testid="channel-topic-input"><button id="channel-topic-submit" data-testid="channel-topic-submit" data-button-role="primary">Save topic</button><button id="archive-channel-btn" data-testid="archive-channel-btn" data-button-role="danger">Archive</button><button id="unarchive-channel-btn" data-testid="unarchive-channel-btn" data-button-role="secondary">Unarchive</button></div>
+<div id="workspace-settings-modal" class="modal"><button id="workspace-settings-close" data-testid="workspace-settings-close" data-button-role="secondary">Close</button><input id="workspace-name-input" data-testid="workspace-name-input"><select id="workspace-join-mode" data-testid="workspace-join-mode"><option>open</option><option>invite_only</option></select><button id="workspace-general-submit" data-testid="workspace-general-submit" data-button-role="primary">Save</button><button id="settings-tab-members" data-testid="settings-tab-members">Members</button><button id="settings-tab-invitations" data-testid="settings-tab-invitations">Invitations</button><button id="settings-tab-general" data-testid="settings-tab-general">General</button><div id="settings-pane-members" data-testid="settings-pane-members"><div data-testid="member-row"><span data-testid="role-badge"></span><select data-testid="role-select"></select></div></div><div id="settings-pane-invitations" data-testid="settings-pane-invitations"><button id="create-invitation-btn" data-testid="create-invitation-btn" data-button-role="secondary">Create invitation</button><div id="invitations-list" data-testid="invitations-list"><span data-testid="invitation-code"></span></div></div><div id="settings-pane-general" data-testid="settings-pane-general"></div></div>
+<form id="create-invitation-form" data-testid="create-invitation-form"><button id="create-invitation-submit" data-testid="create-invitation-submit" data-button-role="primary">Invite</button></form>
+<script>
+const $=s=>document.querySelector(s), all=s=>[...document.querySelectorAll(s)];
+let token=localStorage.getItem('huddle.token')||new URLSearchParams(location.search).get('token')||'', login=false, current=null, workspace=null, me=null;
+if(token)localStorage.setItem('huddle.token',token);
+const authForm=$('[data-testid="auth-form"]'), authButton=$('#auth-submit'), authError=$('#auth-error');
+authForm.dataset.mode='signup';
+async function api(path,opt={}){
+  opt.headers={...(opt.headers||{}),Authorization:'Bearer '+token};
+  if(opt.body && typeof opt.body!=='string'){opt.headers['Content-Type']='application/json';opt.body=JSON.stringify(opt.body)}
+  const r=await fetch('/api'+path,opt), text=await r.text(); let j={}; try{j=JSON.parse(text)}catch{}
+  if(!r.ok)throw Error(j.error||('HTTP '+r.status)); return j;
+}
+function showAuth(){ $('#auth-modal').classList.remove('hidden');$('#app').classList.add('hidden'); }
+function showApp(){ $('#auth-modal').classList.add('hidden');$('#app').classList.remove('hidden');$('#workspace-create-form').style.display='block'; }
+function errText(el,e){el.textContent=e.message||String(e);el.style.display='block'}
+async function refresh(){
+  const meRes=await api('/auth/me'); me=meRes.user; $('[data-testid="current-user"]').textContent=me.username;
+  const ws=(await api('/workspaces')).workspaces||[];
+  if(!ws.length){workspace=null;$('#workspace-create-form').style.display='block';return}
+  workspace=await api('/workspaces/'+encodeURIComponent(ws[0].slug));
+  $('[data-testid="workspace-header"]').textContent=workspace.workspace.name;
+  renderChannels(); if(!current && workspace.channels.length) await openChannel(workspace.channels[0].id,workspace.channels[0].name);
+}
+function renderChannels(){
+  const box=$('#channel-list');
+  box.innerHTML='';
+  (workspace.channels||[]).forEach(c=>{
+    const e=document.createElement('div'); e.className='entry';
+    e.setAttribute('data-testid','channel-entry'); e.setAttribute('data-channel-id',String(c.id)); e.setAttribute('data-channel-name',String(c.name));
+    e.textContent='#'+c.name; e.onclick=()=>openChannel(Number(c.id),c.name); box.appendChild(e);
+  });
+}
+function esc(x){return String(x).replace(/[&<>"']/g,z=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[z]))}
+async function renderMessages(data){
+  const list=$('#message-list');
+  if(!data.messages.length){list.innerHTML='<div id="channel-empty-state" data-testid="channel-empty-state">No messages yet. Start the conversation.</div>';return}
+  list.innerHTML=data.messages.map(m=>`<div class="message" data-testid="message" data-mid="${m.id}">
+    <span data-testid="message-avatar" class="avatar">${esc((m.author.display_name||m.author.username||'?')[0])}</span>
+    <b data-testid="message-author">${esc(m.author.display_name||m.author.username)}</b>
+    <small data-testid="message-time">${new Date(m.created_at).toLocaleString()}</small>
+    <span data-testid="message-body">${esc(m.body)}</span>${m.edited_at?'<span data-testid="message-edited">edited</span>':''}
+    ${m.reply_count?`<button data-testid="reply-count">${m.reply_count} ${m.reply_count==1?'reply':'replies'}</button>`:''}
+    <div class="toolbar">
+      <button data-testid="edit-message-btn">Edit</button><button data-testid="delete-message-btn">Delete</button>
+      <button data-testid="open-thread-btn">Thread</button><button data-testid="reaction-button">😀</button>
+    </div><div class="reactions">${(m.reactions||[]).map(x=>`<span data-testid="reaction-chip">${esc(x.emoji)} ${x.count}</span>`).join('')}</div>
+  </div>`).join('');
+  list.querySelectorAll('[data-testid="edit-message-btn"]').forEach(btn=>btn.onclick=async()=>{
+    const row=btn.closest('[data-testid="message"]'), body=row.querySelector('[data-testid="message-body"]'), input=document.createElement('input');
+    input.setAttribute('data-testid','edit-message-input'); input.value=body.textContent; body.replaceWith(input); input.focus();
+    input.onkeydown=async e=>{if(e.key==='Enter'){await api('/messages/'+row.dataset.mid,{method:'PATCH',body:{body:input.value}});await openChannel(current,row.querySelector('[data-testid="message-author"]').textContent)}}
+  });
+  list.querySelectorAll('[data-testid="delete-message-btn"]').forEach(btn=>btn.onclick=async()=>{
+    const row=btn.closest('[data-testid="message"]'); await api('/messages/'+row.dataset.mid,{method:'DELETE'}); row.remove();
+  });
+  list.querySelectorAll('[data-testid="open-thread-btn"]').forEach(btn=>btn.onclick=()=>openThread(btn.closest('[data-testid="message"]').dataset.mid));
+  list.querySelectorAll('[data-testid="reaction-button"]').forEach(btn=>btn.onclick=()=>{
+    const row=btn.closest('[data-testid="message"]'), picker=document.createElement('div'); picker.setAttribute('data-testid','emoji-picker'); picker.className='picker';
+    ['😀','👍','❤️','🎉','🚀','😂','🔥','✅'].forEach(e=>{const x=document.createElement('button');x.setAttribute('data-testid','emoji-option');x.textContent=e;x.onclick=async()=>{await api('/messages/'+row.dataset.mid+'/reactions',{method:'POST',body:{emoji:e}});picker.remove();await openChannel(current,$('#channel-title').textContent.slice(1))};picker.appendChild(x)});row.appendChild(picker);
+  });
+}
+async function openChannel(id,name){
+  current=id; let ch=(workspace.channels||[]).find(x=>Number(x.id)===Number(id));
+  try{const fresh=await api('/channels/'+id);ch=fresh.channel;workspace.channels=workspace.channels.map(x=>Number(x.id)===Number(id)?ch:x)}catch(e){}
+  $('#channel-title').textContent='#'+(ch&&ch.name||name); $('#channel-topic').textContent=ch&&ch.topic||'';
+  await renderMessages(await api('/channels/'+id+'/messages'));
+}
+async function openThread(mid){
+  const panel=$('#thread-panel'); panel.classList.remove('hidden'); panel.style.display='block';
+  panel.querySelector('#thread-messages').innerHTML='';
+  const x=await api('/messages/'+mid+'/replies');
+  panel.querySelector('#thread-messages').innerHTML=(x.replies||[]).map(m=>`<div data-testid="thread-message"><b>${esc(m.author.display_name)}</b> ${esc(m.body)}</div>`).join('');
+  panel.querySelector('#thread-send').onclick=async e=>{e.preventDefault();const i=$('#thread-input');if(!i.value.trim())return;await api('/channels/'+current+'/messages',{method:'POST',body:{body:i.value,parent_id:Number(mid)}});i.value='';await openThread(mid);await openChannel(current,$('#channel-title').textContent.slice(1))};
+}
+$('#close-thread').onclick=()=>{$('#thread-panel').classList.add('hidden');$('#thread-panel').style.display='none'};
+authForm.onsubmit=async e=>{
+  e.preventDefault(); authError.textContent='';
+  const f={username:authForm.querySelector('input[name="username"]').value,password:authForm.querySelector('input[name="password"]').value};
+  const dn=authForm.querySelector('input[name="display_name"]'); if(dn && dn.value) f.display_name=dn.value;
+  try{
+    const x=await api('/auth/'+(login?'login':'register'),{method:'POST',body:f});
+    token=x.token; localStorage.setItem('huddle.token',token); showApp();
+    try{await refresh()}catch(ex){errText(authError,ex)}
+  }catch(ex){errText(authError,ex);localStorage.removeItem('huddle.token');token=''}
+};
+$('[data-testid="auth-toggle"]').onclick=()=>{
+  login=!login;authForm.dataset.mode=login?'login':'signup';authButton.textContent=login?'Login':'Sign up';
+};
+$('#logout-btn').onclick=()=>{localStorage.removeItem('huddle.token');token='';current=null;showAuth()};
+$('[data-testid="workspace-create-form"]').onsubmit=async e=>{
+  e.preventDefault();
+  const form=e.currentTarget, d={name:form.querySelector('input[name="name"]').value,slug:form.querySelector('input[name="slug"]').value};
+  try{
+    const x=await api('/workspaces',{method:'POST',body:d});
+    workspace={workspace:x.workspace,channels:[x.general_channel],read_state:[]};
+    $('#workspace-create-form').style.display='none';
+    $('[data-testid="workspace-header"]').textContent=x.workspace.name;
+    $('[data-testid="current-user"]').textContent=me.username;
+    renderChannels();
+    document.querySelector('[data-testid="channel-entry"][data-channel-name="general"]');
+    await openChannel(x.general_channel.id,x.general_channel.name);
+  }catch(ex){errText(authError,ex)}
+};
+$('#empty-state-create-workspace').onclick=()=>{$('[data-testid="workspace-create-form"]').scrollIntoView()};
+$('#new-channel-btn').onclick=()=>{$('#create-channel-modal').style.display='block'};
+$('#create-channel-cancel').onclick=()=>{$('#create-channel-modal').style.display='none'};
+$('#create-channel-form').onsubmit=async e=>{
+  e.preventDefault();const d=Object.fromEntries(new FormData(e.target));d.is_private=$('#create-channel-private').checked;
+  const ce=$('[data-testid="create-channel-error"]');ce.textContent='';
+  try{const x=await api('/workspaces/'+encodeURIComponent(workspace.workspace.slug)+'/channels',{method:'POST',body:d});workspace.channels.push(x.channel);renderChannels();$('#create-channel-modal').style.display='none';await openChannel(x.channel.id,x.channel.name)}
+  catch(ex){errText(ce,ex)}
+};
+$('#message-form').onsubmit=async e=>{
+  e.preventDefault();const i=$('#message-input');if(!current||!i.value.trim())return;
+  try{await api('/channels/'+current+'/messages',{method:'POST',body:{body:i.value}});i.value='';const c=workspace.channels.find(x=>x.id===current);await openChannel(current,c&&c.name||'general')}catch(ex){}
+};
+(async()=>{if(token){try{showApp();await refresh()}catch(e){localStorage.removeItem('huddle.token');token='';showAuth()}}else showAuth()})();
+</script></body></html>

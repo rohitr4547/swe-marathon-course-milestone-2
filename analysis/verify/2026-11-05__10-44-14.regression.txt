@@ -1,0 +1,2 @@
+cluster up: 8000 8001 8002 answer /api/health
+REGRESSION: 0 broken
