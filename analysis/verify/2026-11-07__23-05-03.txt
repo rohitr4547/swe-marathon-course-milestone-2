@@ -1,0 +1,133 @@
+cluster up: 8000 8001 8002 answer /api/health
+  check_a_1.sh: RESULT: 16 passed, 1 failed
+      FAIL A0.7 Component A routes return 401 with no token and with a bogus token: expected 401 for POST /api/workspaces/nope/invitations none->404; POST /api/workspaces/nope/...
+  check_a_2.sh: RESULT: 7 passed, 2 failed
+      FAIL A2.7 open workspace: a non-member joining a public channel gets 200 and becomes a 'member': joiner is not listed with role member
+      FAIL A2.8 joining again returns 200 and does not duplicate or change the membership: user listed 0 times
+  check_a_3.sh: RESULT: 3 passed, 8 failed
+      FAIL A3.1 the owner promotes members to admin: 200 {member: {user_id, role}}: expected 200, got 404 {"error": "not found"}
+      FAIL A3.2 an admin can move a non-admin between member and guest: expected 200, got 404 {"error": "not found"}
+      FAIL A3.3 an admin changing another admin or the owner gets 403: expected 403, got 404 {"error": "not found"}
+      FAIL A3.4 role 'owner', an unknown role, or a missing role returns 400: expected 400, got 404 {"error": "not found"}
+      FAIL A3.6 a member or guest changing roles gets 403: expected 403, got 404 {"error": "not found"}
+      FAIL A3.8 a guest cannot join a public channel or create a channel (403): expected 403, got 200 {"channel": {"id": 5, "workspace_id": 2, "name": "pub11986789aaa0", "is_pr...
+      FAIL A3.9 a member creates public channels but not private ones (403); an admin creates private ones: expected 201, got 403 {"error": "forbidden"}
+      FAIL A3.11 transfer to an admin: 200; target becomes owner (owner_id too), previous owner becomes admin: expected 200, got 400 {"error": "target must be admin"}
+  check_a_4.sh: RESULT: 0 passed, 11 failed
+      NOTE A4: setup: could not make an admin (A3.1)
+A: 26 passed, 22 failed
+  check_b_1.sh: RESULT: 9 passed, 9 failed
+      FAIL B0.7 Component B routes return 401 with no token and with a bogus token: expected 401 for GET /api/messages/999999999/replies none->404; GET /api/messages/999999999/...
+      FAIL B1.2 topic of 250 chars is accepted at create; 251 chars returns 400: expected 400, got 201 {"channel": {"id": 11, "workspace_id": 4, "name": "t11987211c1fa", "is_pr...
+      FAIL B1.3 a duplicate name returns 409; bad names (space, uppercase, 33 chars, empty) return 400: expected 409, got 201 {"channel": {"id": 12, "workspace_id": 4, "name": ...
+      FAIL B1.4 GET /api/workspaces/{slug}: 200 {workspace, channels, read_state}; hides others' private channels: expected 200, got 403 {"error": "forbidden"}
+      FAIL B1.5 archived channels are omitted unless ?include_archived=1 or ?include_archived=true: expected 200, got 500 500 Internal Server Error Server got itself in trouble
+      FAIL B1.6 PATCH topic: channel member or workspace owner 200 {channel}; other member 403; 251 chars 400: expected 200, got 500 500 Internal Server Error Server got itself...
+      FAIL B1.8 leave returns 200 {channel}, again 200 (idempotent), and removes the member: expected 200, got 500 500 Internal Server Error Server got itself in trouble
+      FAIL B1.9 a user who joins the workspace through another channel is also added to #general: new workspace member (or the owner) is not in #general
+      FAIL B1.10 archive/unarchive are owner-only; writes to an archived channel return 423 until unarchived: expected 403, got 500 500 Internal Server Error Server got itself i...
+  check_b_2.sh: RESULT: 5 passed, 6 failed
+      FAIL B2.3 workspace members may post in public channels; outsiders and private non-members get 403: expected 201, got 403 {"error": "forbidden"}
+      FAIL B2.4 GET messages pages newest-first with next_cursor; null on the last page: page 1 was ['p5', 'p4'], next_cursor None
+      FAIL B2.5 a cursor issued by 8000 gives the same page on 8001 and 8002: no cursor from B2.4
+      FAIL B2.6 a cursor still resumes from the same place after new messages arrive: no cursor from B2.4
+      FAIL B2.7 limit defaults to 50 when omitted: got 50 messages
+      FAIL B2.11 replies: oldest-first and paged; parent reply_count counts them; replies stay out of the channel list: expected 201, got 403 {"error": "forbidden"}
+  check_b_3.sh: RESULT: 2 passed, 5 failed
+      FAIL B3.1 POST /api/messages/{id}/pin: 200 {pin: {message_id, pinned_by, pinned_at}}; repeat is idempotent: re-pinning changed pinned_at
+      FAIL B3.2 GET pins: newest-first [{message, pinned_by, pinned_at}], paged with next_cursor; bad cursor 400: limit=1 should give one pin and a next_cursor
+      FAIL B3.5 search: 200 {results, next_cursor} newest-first, case-insensitive, accessible channels only: member got ['beta zq1198923025e8 two']
+      FAIL B3.6 search workspace_id=<id> limits results to that workspace: got ['other zq1198923025e8 four', 'secret zq1198923025e8 three', 'beta zq1198923025e8 two', 'alpha zq...
+      FAIL B3.7 search pages with limit/cursor; limit=0 or a missing q returns 400: limit=1 should give one result and a cursor
+  check_b_4.sh: RESULT: 1 passed, 6 failed
+      FAIL B4.2 a post on 8001 reaches subscribers on 8000 and 8002 as message.created with event_id head+1: port 8000 got nothing
+      FAIL B4.3 posts on 8000, 8001, 8002 get consecutive event_ids with no gaps or duplicates: port 8000 got nothing
+      FAIL B4.4 every Spec B write kind is broadcast once, in order, each advancing event_id by exactly 1: POST /api/channels/25/leave got 500 500 Internal Server Error Server ...
+      FAIL B4.5 no-op writes (join when joined, leave when left) emit no event: got nothing
+      FAIL B4.6 resume on another node replays events after since_event_id in order, sends 'resumed', then streams live: no 'resumed' frame; got nothing
+      FAIL B4.7 60 posts sent at once through all three nodes all return 201 with dense, unique event_ids: got 0 frames, 0 unique, in order: True; expected 8..67
+  check_b_5.sh: RESULT: 0 passed, 9 failed
+      FAIL B5.1 '@username' of a workspace member resolves to their id in mentions: mentions was not [bob's id]
+      FAIL B5.2 mentions are deduped and skip self, emails, in-word '@', non-members and unknown names: '@mb12013850ea89 and @mb12013850ea89'->[]
+      FAIL B5.3 '@channel' expands to every channel member except the author, deduped with explicit mentions: @channel did not give bob and carol
+      NOTE B5: setup: did not receive 3 message.created frames (fix B4 first)
+B: 17 passed, 35 failed
+  check_c_1.sh: RESULT: 2 passed, 7 failed
+      FAIL C0.1 Component C routes return 401 with no token and with a bogus token: expected 401 for DELETE /api/messages/999999999/reactions/x none->404; DELETE /api/messages/...
+      FAIL C0.2 unknown message, file, user or workspace ids return 404 with a valid token: expected 404 for POST /api/messages/999999999/reactions->200; POST /api/dms->200
+      FAIL C1.3 a unicode emoji works in POST and as the URL-encoded {emoji} in DELETE; emojis keep first-added order: expected 200, got 404 404: Not Found
+      FAIL C1.4 DELETE removes only the caller's reaction; an emoji with no users left is dropped: expected 200, got 404 404: Not Found
+      FAIL C1.5 message objects in GET /api/channels/{id}/messages carry the same reactions list: listed reactions were [[{'emoji': 'eyes', 'count': 1, 'user_ids': [42]}, {'emo...
+      FAIL C1.6 reaction.added / reaction.removed events: one each, consecutive event_ids; repeats emit nothing: got nothing
+      FAIL C1.7 empty, non-string or missing emoji returns 400; a non-member of a private channel gets 403: expected 400, got 200 {"reactions": [{"emoji": "", "count": 1, "user...
+  check_c_2.sh: RESULT: 3 passed, 5 failed
+      FAIL C2.3 POST /api/dms with an unknown user returns 404; a missing or non-integer user_id returns 400: expected 404, got 200 {"channel_id": 33}
+      FAIL C2.4 POST /api/files (multipart 'file') returns 201 {file: {id, uploader_id, filename, content_type, size, created_at}}: file was {"file": {"id": 1, "uploader_id": 4...
+      FAIL C2.5 GET /api/files/{id} returns 200 {file} on every node: expected 200, got 404 404: Not Found
+      FAIL C2.6 GET /api/files/{id}/download returns the exact bytes, the Content-Type, and the filename in Content-Disposition: notes.bin: status 404, 14 bytes (expected 2051)
+      FAIL C2.8 file_ids on a post attach the caller's own unattached files; reuse, someone else's or unknown ids return 400: message.files was []
+  check_c_3.sh: RESULT: 0 passed, 6 failed
+      FAIL C3.1 '/me <text>' posts a normal message whose body stays '/me <text>'; '/me' with no text returns 400: expected 400, got 201 {"message": {"id": 150, "channel_id": 3...
+      FAIL C3.2 '/shrug <text>' posts '<text> ¯\_(ツ)_/¯'; '/shrug' alone posts just the emoticon: body was '/shrug ok then'
+      FAIL C3.3 '//text' posts a literal message whose body is '/text'; an unknown command returns 400: body was '//etc/hosts is a file'
+      FAIL C3.4 '/topic <text>' returns 201 {message: null, channel} with the new topic: response was {"message": {"id": 153, "channel_id": 36, "author_id": 47, "author": {"id"...
+      FAIL C3.5 '/invite @user' returns 201 {message: null, invited_user} and adds them to the channel: response was {"message": {"id": 154, "channel_id": 36, "author_id": 47, ...
+      FAIL C3.6 '/archive' and '/unarchive' by the workspace owner return 201 {message: null, channel}; others get 403: expected 403, got 201 {"message": {"id": 155, "channel_i...
+  check_c_4.sh: RESULT: 0 passed, 7 failed
+      FAIL C4.1 any member creates a group: 201 {group: {id, handle, name, member_user_ids}}; GET lists it: expected 201, got 404 404: Not Found
+      FAIL C4.2 duplicate handle 409; bad handle, missing handle or a non-member in user_ids 400; outsiders 403: expected 409, got 404 404: Not Found
+      FAIL C4.3 PATCH by the creator or workspace owner 200 {group}; other members 403; unknown handle 404: expected 200, got 404 404: Not Found
+      FAIL C4.4 @group-handle mentions group members in the channel, minus the author and anyone not in the channel: mentions were []; expected only cat (ben is not in the chan...
+      FAIL C4.5 @here mentions non-author channel members with an open WebSocket on any node, and stops after it closes: with cat connected: []
+      FAIL C4.6 ids from @user, @group, @here and @channel are deduped; the author is never included: mentions were []; expected ann and owner once each, never cat
+      FAIL C4.7 DELETE by others 403; by the creator 200 {deleted: true}, again 200; the group is gone: expected 403, got 404 404: Not Found
+  check_c_5.sh: RESULT: 0 passed, 4 failed
+      FAIL C5.1 GET /api/users/{id} returns 200 {user} with every UserObj field: expected 200, got 404 404: Not Found
+      FAIL C5.2 PATCH /api/users/me saves any subset of profile fields and returns 200 {user}; other nodes see it: 8002 sees {}
+      FAIL C5.3 an unknown timezone, an out-of-range length or a wrong type returns 400 and saves nothing: {'timezone': 'Mars/Olympus_Mons'} -> got 200 {"user": {"id": 54, "use...
+      FAIL C5.4 a profile update reaches every connected client as {type: user.updated, user} with no channel_id or event_id: ted (no shared channel, on 8002) got no user.updat...
+C: 5 passed, 29 failed
+  check_d_1.sh: RESULT: 5 passed, 3 failed
+      FAIL D1.2 a subscriber on 8002 keeps receiving those posts live, with consecutive event_ids: 8002 got nothing
+      FAIL D1.3 a client whose node died reconnects to 8000, resumes, and gets every missed event, then 'resumed': replayed [], end None
+      FAIL D1.5 after it returns, a post through 8001 reaches the 8002 subscriber with the next event_id: 8002 got nothing
+  check_d_2.sh: RESULT: 1 passed, 2 failed
+      FAIL D2.2 subscribers on 8000 and 8002 receive all three during the outage, event_ids dense from the head: 8000 got nothing
+      FAIL D2.3 start.sh restarts Redis within 10s, and fan-out still works afterwards: 8000 got nothing
+  check_d_3.sh: RESULT: 0 passed, 3 failed
+      FAIL D3.1 6 writers on 3 nodes post 60 messages; 3 subscribers (one per node) miss at most 1% of them: 180 of 180 expected deliveries missing (per node: [0, 0, 0] of 60)
+      FAIL D3.2 median delivery latency (send to receipt) is at most 300 ms: no deliveries measured (see D3.1)
+      FAIL D3.3 p95 delivery latency is at most 800 ms: no deliveries measured (see D3.1)
+D: 6 passed, 8 failed
+  check_e_1.sh: RESULT: 1 passed, 8 failed
+      FAIL E0.1 PATCH and DELETE /api/messages/{id} return 401 with no token and with a bogus token: expected 401 for PATCH none->404; PATCH bogus->404; DELETE none->404; DELET...
+      FAIL E1.1 PATCH /api/messages/{id} by the author: 200 {message} with the new body and edited_at (UTC Z): expected 200, got 404 404: Not Found
+      FAIL E1.2 edit: non-author 403 (the workspace owner too); empty or non-string body 400: expected 403, got 404 404: Not Found
+      FAIL E1.3 DELETE by the author or the workspace owner: 200 {deleted: true}; again 200; anyone else 403: expected 403, got 404 404: Not Found
+      FAIL E1.4 editing a deleted message returns 409: expected 200, got 404 404: Not Found
+      FAIL E1.5 a deleted message leaves history and its thread; the parent's reply_count drops: deleted message still in channel history
+      FAIL E1.6 an edit resolves mentions again from the new body: mentions after edit: None
+      FAIL E1.7 message.updated {message} and message.deleted {message_id} events; a repeat delete emits nothing: got nothing
+  check_e_2.sh: RESULT: 0 passed, 5 failed
+      FAIL E2.1 IRC on 0.0.0.0:6667: PASS with a bad token gets 464: no 464; got []
+      FAIL E2.2 PASS <token>, NICK, USER get numerics 001 to 005 and then 422: no 422 ERR_NOMOTD; got []
+      FAIL E2.3 JOIN #slug/channel echoes JOIN, then 353 and 366; '#slug-general' or unknown names get 403: no JOIN echo; got []
+      FAIL E2.4 PING gets PONG; PONG, NAMES, WHO, LIST, TOPIC and MODE are accepted (never 421); unknown commands get 421: no PONG tok123
+      FAIL E2.5 a nick collision gets 433 and keeps the connection open; QUIT closes without an error line: nick collision was not 433
+  check_e_3.sh: RESULT: 0 passed, 4 failed
+      NOTE E3: setup: IRC registration or JOIN failed (fix E.2 first)
+  check_e_4.sh: RESULT: 1 passed, 4 failed
+      FAIL E4.2 the initial HTML carries every pinned non-dynamic data-testid and the extra hooks this spec adds: missing 47: workspace-create-form empty-state-create-workspace...
+      FAIL E4.3 the initial HTML carries the DOM ids auth-modal, create-channel-modal, channel-settings-modal, workspace-settings-modal, create-invitation-form: missing ids ['c...
+      FAIL E4.4 each listed button carries data-button-role (primary, danger or secondary) in the initial HTML: wrong or missing data-button-role: thread-send (want primary), c...
+      FAIL E4.5 at 1280x900 each listed button's resting background-color and color are exactly its role's colours: 19 buttons wrong: send-btn=missing; thread-send=missing; cre...
+  check_e_5.sh: RESULT: 1 passed, 6 failed
+      FAIL E5.1 sign-up with an invalid username shows a visible non-empty auth-error and logs nobody in: no visible text in [data-testid=auth-error]
+      FAIL E5.2 a valid sign-up logs in: token stored under huddle.token, auth-form hidden, current-user shows the name: no token in localStorage after sign-up
+      FAIL E5.3 workspace-create-form creates a workspace: workspace-header shows it and #general is listed: timed out waiting for locator("[data-testid=\"empty-state-create-wo...
+      FAIL E5.4 new-channel-btn and create-channel-form create a channel and open it; a duplicate name shows create-channel-error: timed out waiting for locator("[data-testid=\...
+      FAIL E5.5 switching channels updates channel-title and channel-topic; an empty channel shows non-blank channel-empty-state: timed out waiting for locator("[data-testid=\"...
+      FAIL E5.6 logout-btn logs out (token cleared, auth-form shown); logging back in restores the same workspace: timed out waiting for locator("[data-testid=\"logout-btn\"]")...
+  check_e_6.sh: RESULT: 0 passed, 7 failed
+      NOTE E6: setup: the channel is not in the sidebar after loading with a stored token (fix E.5 first)
+E: 3 passed, 34 failed

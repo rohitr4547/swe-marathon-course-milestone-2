@@ -1,0 +1,90 @@
+cluster up: 8000 8001 8002 answer /api/health
+  check_a_1.sh: RESULT: 17 passed, 0 failed
+  check_a_2.sh: RESULT: 5 passed, 4 failed
+      FAIL A2.2 a duplicate slug returns 409, even from another user: expected 409, got 500 {"error": "UNIQUE constraint failed: workspaces.slug"}
+      FAIL A2.3 bad slugs (uppercase, 1 char, 33 chars, space, underscore) or a missing name return 400: expected 400 for 'Bad-Slug'->201, 'a'->201, 'xxxxxxxxxxxx'->201, 'has s...
+      FAIL A2.5 GET /api/workspaces/{slug}/members lists the owner with role owner; non-member 403; unknown 404: expected 403, got 200 {"members": [{"user_id": 3, "role": "owne...
+      FAIL A2.9 joining an unknown channel returns 404; a private channel without an invite returns 403: expected 403, got 200 {"channel": {"id": 8, "workspace_id": 1, "name": ...
+  check_a_3.sh: RESULT: 1 passed, 10 failed
+      FAIL A3.1 the owner promotes members to admin: 200 {member: {user_id, role}}: expected 200, got 404 {"error": "not found"}
+      FAIL A3.2 an admin can move a non-admin between member and guest: expected 200, got 404 {"error": "not found"}
+      FAIL A3.3 an admin changing another admin or the owner gets 403: expected 403, got 404 {"error": "not found"}
+      FAIL A3.4 role 'owner', an unknown role, or a missing role returns 400: expected 400, got 404 {"error": "not found"}
+      FAIL A3.5 the owner cannot change their own role via PATCH (403): expected 403, got 404 {"error": "not found"}
+      FAIL A3.6 a member or guest changing roles gets 403: expected 403, got 404 {"error": "not found"}
+      FAIL A3.8 a guest cannot join a public channel or create a channel (403): expected 403, got 200 {"channel": {"id": 10, "workspace_id": 7, "name": "pub11890718acd5", "is_p...
+      FAIL A3.9 a member creates public channels but not private ones (403); an admin creates private ones: expected 403, got 201 {"channel": {"id": 12, "workspace_id": 7, "nam...
+      FAIL A3.10 transfer_ownership: an admin caller gets 403; a non-admin target gets 400: expected 403, got 404 {"error": "not found"}
+      FAIL A3.11 transfer to an admin: 200; target becomes owner (owner_id too), previous owner becomes admin: expected 200, got 404 {"error": "not found"}
+  check_a_4.sh: RESULT: 0 passed, 11 failed
+      NOTE A4: setup: could not make an admin (A3.1)
+A: 23 passed, 25 failed
+  check_b_1.sh: RESULT: 10 passed, 8 failed
+      FAIL B0.8 unknown channel or message ids return 404 with a valid token: expected 404 for GET /api/messages/999999999/replies->200
+      FAIL B1.2 topic of 250 chars is accepted at create; 251 chars returns 400: expected 400, got 201 {"channel": {"id": 17, "workspace_id": 9, "name": "t118912351aba", "is_pr...
+      FAIL B1.3 a duplicate name returns 409; bad names (space, uppercase, 33 chars, empty) return 400: expected 400 for 'bad name'->201, 'UPPER'->201, 'xxxxxxxxxxxx'->201, ''-...
+      FAIL B1.4 GET /api/workspaces/{slug}: 200 {workspace, channels, read_state}; hides others' private channels: a private channel is shown to a non-member
+      FAIL B1.5 archived channels are omitted unless ?include_archived=1 or ?include_archived=true: archived channel missing with include_archived=1
+      FAIL B1.6 PATCH topic: channel member or workspace owner 200 {channel}; other member 403; 251 chars 400: expected 403, got 200 {"channel": {"id": 24, "workspace_id": 9, "...
+      FAIL B1.9 a user who joins the workspace through another channel is also added to #general: new workspace member (or the owner) is not in #general
+      FAIL B1.10 archive/unarchive are owner-only; writes to an archived channel return 423 until unarchived: expected 423, got 200 {"channel": {"id": 24, "workspace_id": 9, "na...
+  check_b_2.sh: RESULT: 2 passed, 9 failed
+      FAIL B2.3 workspace members may post in public channels; outsiders and private non-members get 403: expected 201, got 403 {"error": "forbidden"}
+      FAIL B2.4 GET messages pages newest-first with next_cursor; null on the last page: page 1 was ['p5', 'p4', 'p3', 'p2', 'p1'], next_cursor None
+      FAIL B2.5 a cursor issued by 8000 gives the same page on 8001 and 8002: no cursor from B2.4
+      FAIL B2.6 a cursor still resumes from the same place after new messages arrive: no cursor from B2.4
+      FAIL B2.7 limit defaults to 50 when omitted: got 52 messages
+      FAIL B2.8 limit 0, 201, -1 or 'abc' returns 400; limit 200 is accepted: expected 400, got 200 {"messages": [{"id": 6, "channel_id": 27, "author_id": 27, "author": {"id": ...
+      FAIL B2.9 a malformed or made-up cursor returns 400: expected 400, got 200 {"messages": [{"id": 6, "channel_id": 27, "author_id": 27, "author": {"id": 27, "username"...
+      FAIL B2.10 offset pagination is rejected: ?offset= or ?page= returns 400: expected 400, got 200 {"messages": [{"id": 6, "channel_id": 27, "author_id": 27, "author": {"id":...
+      FAIL B2.11 replies: oldest-first and paged; parent reply_count counts them; replies stay out of the channel list: expected 201, got 403 {"error": "forbidden"}
+  check_b_3.sh: RESULT: 0 passed, 7 failed
+      FAIL B3.1 POST /api/messages/{id}/pin: 200 {pin: {message_id, pinned_by, pinned_at}}; repeat is idempotent: expected 200, got 404 {"error": "not found"}
+      FAIL B3.2 GET pins: newest-first [{message, pinned_by, pinned_at}], paged with next_cursor; bad cursor 400: expected 200, got 404 {"error": "not found"}
+      FAIL B3.3 DELETE /api/messages/{id}/pin: 200 {unpinned: true}; the pin leaves the list: expected 200, got 404 {"error": "not found"}
+      FAIL B3.4 non-members of a private channel get 403 on its pin list: expected 200, got 404 {"error": "not found"}
+      FAIL B3.5 search: 200 {results, next_cursor} newest-first, case-insensitive, accessible channels only: expected 200, got 404 {"error": "not found"}
+      FAIL B3.6 search workspace_id=<id> limits results to that workspace: expected 200, got 404 {"error": "not found"}
+      FAIL B3.7 search pages with limit/cursor; limit=0 or a missing q returns 400: limit=1 should give one result and a cursor
+  check_b_4.sh: RESULT: 4 passed, 3 failed
+      FAIL B4.4 every Spec B write kind is broadcast once, in order, each advancing event_id by exactly 1: expected ['message.reply', 'member.left', 'member.joined', 'channel.u...
+      FAIL B4.5 no-op writes (join when joined, leave when left) emit no event: got message.created#7
+      FAIL B4.6 resume on another node replays events after since_event_id in order, sends 'resumed', then streams live: replayed nothing, expected event_ids 1..14
+  check_b_5.sh: RESULT: 3 passed, 6 failed
+      FAIL B5.4 GET read: 200 {read_state: {channel_id, last_read_event_id 0, unread_count 3, mention_count 1}}: expected 200, got 404 {"error": "not found"}
+      FAIL B5.5 POST read moves the cursor forward and recounts; an older event_id never moves it back: expected 200, got 404 {"error": "not found"}
+      FAIL B5.6 the reader's own messages, even self-mentions, add no unread or mention counts: read_state was {}
+      FAIL B5.7 GET /api/workspaces/{slug} read_state is a list holding the same object for each channel: read_state is dict, expected a list
+      FAIL B5.8 POST read with a non-integer returns 400; private-channel non-members get 403: expected 400, got 404 {"error": "not found"}
+      FAIL B5.9 wrong JSON types or a malformed JSON body on Spec B routes return 400, never 500: expected 400 for POST workspaces/ws119002816560/ch {'name': 'ty11900948b913', ...
+B: 19 passed, 33 failed
+  check_c_1.sh: RESULT: 9 passed, 0 failed
+  check_c_2.sh: RESULT: 8 passed, 0 failed
+  check_c_3.sh: RESULT: 6 passed, 0 failed
+  check_c_4.sh: RESULT: 6 passed, 1 failed
+      FAIL C4.5 @here mentions non-author channel members with an open WebSocket on any node, and stops after it closes: cat was still mentioned by @here 4s after closing the W...
+  check_c_5.sh: RESULT: 4 passed, 0 failed
+C: 33 passed, 1 failed
+  check_d_1.sh: RESULT: 7 passed, 1 failed
+      FAIL D1.3 a client whose node died reconnects to 8000, resumes, and gets every missed event, then 'resumed': the socket on the killed node 8001 did not close
+  check_d_2.sh: RESULT: 3 passed, 0 failed
+  check_d_3.sh: RESULT: 2 passed, 1 failed
+      FAIL D3.3 p95 delivery latency is at most 800 ms: p95 was 926 ms; [1300, 1306, 1387, 1667, 1925] are the slowest
+D: 12 passed, 2 failed
+  check_e_1.sh: RESULT: 9 passed, 0 failed
+  check_e_2.sh: RESULT: 5 passed, 0 failed
+  check_e_3.sh: RESULT: 4 passed, 0 failed
+  check_e_4.sh: RESULT: 4 passed, 1 failed
+      FAIL E4.2 the initial HTML carries every pinned non-dynamic data-testid and the extra hooks this spec adds: missing 1: empty-state-create-workspace
+  check_e_5.sh: RESULT: 3 passed, 4 failed
+      FAIL E5.3 workspace-create-form creates a workspace: workspace-header shows it and #general is listed: timed out waiting for locator("[data-testid=\"workspace-create-form...
+      FAIL E5.4 new-channel-btn and create-channel-form create a channel and open it; a duplicate name shows create-channel-error: the new channel did not appear in the sidebar
+      FAIL E5.5 switching channels updates channel-title and channel-topic; an empty channel shows non-blank channel-empty-state: timed out waiting for locator("[data-testid=\"...
+      FAIL E5.6 logout-btn logs out (token cleared, auth-form shown); logging back in restores the same workspace: after login workspace-header shows 'Workspace'
+  check_e_6.sh: RESULT: 2 passed, 5 failed
+      FAIL E6.1 message-input and send-btn post a message: a row shows avatar, author, readable time and body: missing or blank [data-testid=message-avatar] in the row
+      FAIL E6.3 the hover toolbar edits a message: edited indicator shown, and both survive a hard reload: timed out waiting for locator("[data-testid=\"message-list\"] [data-t...
+      FAIL E6.4 the thread opens in a right-side thread-panel; a reply there bumps the parent's reply-count to '1 reply': timed out waiting for locator("[data-testid=\"message-...
+      FAIL E6.5 reaction-button opens an emoji-picker grid; choosing an emoji-option shows a reaction-chip with count 1: emoji-picker did not open
+      FAIL E6.6 the hover toolbar deletes a message without any dialog; it leaves the list and the API history: timed out waiting for locator("[data-testid=\"message-list\"] [d...
+E: 27 passed, 10 failed

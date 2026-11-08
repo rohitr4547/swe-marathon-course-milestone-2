@@ -106,6 +106,11 @@ model:
         only:
           - openai
         allow_fallbacks: false
+      # With no reasoning setting (and with effort low or minimal) the model reasons at length on its
+      # first call, imagines a whole session and submits an empty /app. The direct OpenAI runs used a
+      # median of 45 reasoning tokens per call; effort none reproduces their one-command first reply.
+      reasoning:
+        effort: none
   # AIDEV-NOTE: pricing carried over from the AWS Bedrock In-Region gpt-5.6-luna config
   # ($0.22/1M in, $1.32/1M out). OpenRouter/openai rates may differ -- confirm against
   # OpenRouter's listing and update if cost tracking must be exact. Explicit per-token

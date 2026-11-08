@@ -1,0 +1,109 @@
+{
+    "id": "bda5f2df-88a1-43f5-ad7e-75748d986113",
+    "task_name": "abundant/slack-clone",
+    "trial_name": "final_task__ggAGaEG",
+    "trial_uri": "file:///Users/rohit.ramesh/Desktop/Columbia/Courses/Advanced%20Software%20Dev%20with%20AI/course_milestone_2/tasks/slack-clone-course/jobs/2026-11-07__21-59-09/final_task__ggAGaEG",
+    "task_id": {
+        "path": "tasks/slack-clone-course/course-staff-files/final_task"
+    },
+    "source": null,
+    "task_checksum": "78300cd5ca2c8ff8e1fbc48aa28b16d89f03fa6c633f1f33e6d6b78c931a1f3c",
+    "config": {
+        "task": {
+            "path": "tasks/slack-clone-course/course-staff-files/final_task",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "final_task__ggAGaEG",
+        "trials_dir": "/Users/rohit.ramesh/Desktop/Columbia/Courses/Advanced Software Dev with AI/course_milestone_2/tasks/slack-clone-course/jobs/2026-11-07__21-59-09",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "mini_swe_agent_local:MiniSweAgentLocal",
+            "import_path": null,
+            "model_name": "openrouter/openai/gpt-5.6-luna",
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {
+                "config_file": "/Users/rohit.ramesh/Desktop/Columbia/Courses/Advanced Software Dev with AI/course_milestone_2/tasks/slack-clone-course/course-staff-files/final_task/agent_llm_config/mswea-openrouter-gpt-5.6-luna-no-reasoning.yaml",
+                "cost_limit": 3
+            },
+            "mcp_servers": []
+        },
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": true
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "job_id": "48ca3cf5-ecca-460e-a622-3b94a1449312"
+    },
+    "agent_info": {
+        "name": "mini-swe-agent-local",
+        "version": "2.4.6",
+        "model_info": {
+            "name": "openai/gpt-5.6-luna",
+            "provider": "openrouter"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 5793155,
+        "n_cache_tokens": 5710437,
+        "n_output_tokens": 31593,
+        "cost_usd": 1.3161968600000002,
+        "rollout_details": null,
+        "metadata": null
+    },
+    "verifier_result": null,
+    "exception_info": null,
+    "started_at": "2026-11-08T02:59:12.319216Z",
+    "finished_at": "2026-11-08T03:24:37.607245Z",
+    "environment_setup": {
+        "started_at": "2026-11-08T02:59:12.559043Z",
+        "finished_at": "2026-11-08T02:59:16.521498Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-11-08T02:59:16.521974Z",
+        "finished_at": "2026-11-08T03:04:17.058414Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-11-08T03:04:17.060312Z",
+        "finished_at": "2026-11-08T03:24:32.799716Z"
+    },
+    "verifier": null,
+    "step_results": null
+}

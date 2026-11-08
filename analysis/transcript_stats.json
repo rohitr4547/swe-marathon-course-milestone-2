@@ -475,5 +475,248 @@
   },
   "submitted_with_failures": [],
   "exit_status": "Submitted"
+ },
+ "2.2:2": {
+  "job": "2026-11-07__15-35-37",
+  "calls": 13,
+  "cost": 0.0615,
+  "minutes": 1.2,
+  "check_commands": 4,
+  "check_runs": 4,
+  "runs_per_check": {
+   "check_d_1.sh": 2,
+   "check_d_2.sh": 1,
+   "check_d_3.sh": 1
+  },
+  "last_seen": {
+   "check_d_1.sh": "8/8",
+   "check_d_2.sh": "3/3",
+   "check_d_3.sh": "3/3"
+  },
+  "submitted_with_failures": [],
+  "exit_status": "Submitted"
+ },
+ "2.1:2": {
+  "job": "2026-11-07__20-33-29",
+  "calls": 40,
+  "cost": 0.324,
+  "minutes": 3.2,
+  "check_commands": 19,
+  "check_runs": 23,
+  "runs_per_check": {
+   "check_c_1.sh": 9,
+   "check_c_2.sh": 3,
+   "check_c_3.sh": 5,
+   "check_c_4.sh": 4,
+   "check_c_5.sh": 2
+  },
+  "last_seen": {
+   "check_c_1.sh": "9/9",
+   "check_c_2.sh": "8/8",
+   "check_c_3.sh": "6/6",
+   "check_c_4.sh": "7/7",
+   "check_c_5.sh": "4/4"
+  },
+  "submitted_with_failures": [],
+  "exit_status": "Submitted"
+ },
+ "1.2:2": {
+  "job": "2026-11-07__20-37-45",
+  "calls": 25,
+  "cost": 0.1468,
+  "minutes": 1.7,
+  "check_commands": 4,
+  "check_runs": 4,
+  "runs_per_check": {
+   "check_d_1.sh": 2,
+   "check_d_2.sh": 1,
+   "check_d_3.sh": 1
+  },
+  "last_seen": {
+   "check_d_1.sh": "6/8",
+   "check_d_2.sh": "3/3",
+   "check_d_3.sh": "3/3"
+  },
+  "submitted_with_failures": [
+   "check_d_1.sh"
+  ],
+  "exit_status": "Submitted"
+ },
+ "1.1:2": {
+  "job": "2026-11-07__20-41-01",
+  "calls": 63,
+  "cost": 0.5714,
+  "minutes": 4.7,
+  "check_commands": 17,
+  "check_runs": 17,
+  "runs_per_check": {
+   "check_c_1.sh": 8,
+   "check_c_2.sh": 1,
+   "check_c_3.sh": 2,
+   "check_c_4.sh": 4,
+   "check_c_5.sh": 2
+  },
+  "last_seen": {
+   "check_c_1.sh": "9/9",
+   "check_c_2.sh": "6/8",
+   "check_c_3.sh": "6/6",
+   "check_c_4.sh": "7/7",
+   "check_c_5.sh": "4/4"
+  },
+  "submitted_with_failures": [
+   "check_c_2.sh"
+  ],
+  "exit_status": "Submitted"
+ },
+ "3:2": {
+  "job": "2026-11-07__20-47-18",
+  "calls": 112,
+  "cost": 1.6689,
+  "minutes": 13.7,
+  "check_commands": 70,
+  "check_runs": 70,
+  "runs_per_check": {
+   "check_c_1.sh": 5,
+   "check_c_2.sh": 2,
+   "check_c_3.sh": 9,
+   "check_c_4.sh": 10,
+   "check_c_5.sh": 3,
+   "check_d_1.sh": 1,
+   "check_d_2.sh": 1,
+   "check_d_3.sh": 1,
+   "check_e_1.sh": 1,
+   "check_e_2.sh": 3,
+   "check_e_3.sh": 2,
+   "check_e_4.sh": 4,
+   "check_e_5.sh": 7,
+   "check_e_6.sh": 21
+  },
+  "last_seen": {
+   "check_c_1.sh": "9/9",
+   "check_c_2.sh": "8/8",
+   "check_c_3.sh": "6/6",
+   "check_c_4.sh": "7/7",
+   "check_c_5.sh": "4/4",
+   "check_d_1.sh": "8/8",
+   "check_d_2.sh": "3/3",
+   "check_d_3.sh": "3/3",
+   "check_e_1.sh": "9/9",
+   "check_e_2.sh": "5/5",
+   "check_e_3.sh": "4/4",
+   "check_e_4.sh": "5/5",
+   "check_e_5.sh": "7/7",
+   "check_e_6.sh": "7/7"
+  },
+  "submitted_with_failures": [],
+  "exit_status": "Submitted"
+ },
+ "1.3:2": {
+  "job": "2026-11-07__21-59-09",
+  "calls": 110,
+  "cost": 1.3162,
+  "minutes": 20.1,
+  "check_commands": 2,
+  "check_runs": 2,
+  "runs_per_check": {
+   "check_e_1.sh": 1,
+   "check_e_5.sh": 1
+  },
+  "last_seen": {
+   "check_e_1.sh": "7/9",
+   "check_e_5.sh": "3/7"
+  },
+  "submitted_with_failures": [
+   "check_e_1.sh",
+   "check_e_5.sh"
+  ],
+  "exit_status": "Submitted"
+ },
+ "2.3:2": {
+  "job": "2026-11-07__22-25-48",
+  "calls": 87,
+  "cost": 0.8041,
+  "minutes": 9.6,
+  "check_commands": 26,
+  "check_runs": 31,
+  "runs_per_check": {
+   "check_e_1.sh": 3,
+   "check_e_2.sh": 3,
+   "check_e_3.sh": 3,
+   "check_e_4.sh": 8,
+   "check_e_5.sh": 13,
+   "check_e_6.sh": 1
+  },
+  "last_seen": {
+   "check_e_1.sh": "9/9",
+   "check_e_2.sh": "5/5",
+   "check_e_3.sh": "4/4",
+   "check_e_4.sh": "5/5",
+   "check_e_5.sh": "3/7",
+   "check_e_6.sh": "0/7"
+  },
+  "submitted_with_failures": [
+   "check_e_5.sh",
+   "check_e_6.sh"
+  ],
+  "exit_status": "Submitted"
+ },
+ "4:2": {
+  "job": "2026-11-07__22-41-10",
+  "calls": 202,
+  "cost": 3.0051,
+  "minutes": 17.6,
+  "check_commands": 65,
+  "check_runs": 65,
+  "runs_per_check": {
+   "check_c_1.sh": 14,
+   "check_c_2.sh": 4,
+   "check_c_3.sh": 3,
+   "check_c_4.sh": 11,
+   "check_c_5.sh": 4,
+   "check_d_1.sh": 5,
+   "check_d_2.sh": 1,
+   "check_d_3.sh": 2,
+   "check_e_1.sh": 3,
+   "check_e_2.sh": 2,
+   "check_e_3.sh": 12,
+   "check_e_4.sh": 4
+  },
+  "last_seen": {
+   "check_c_1.sh": "9/9",
+   "check_c_2.sh": "8/8",
+   "check_c_3.sh": "6/6",
+   "check_c_4.sh": "7/7",
+   "check_c_5.sh": "4/4",
+   "check_d_1.sh": "7/8",
+   "check_d_2.sh": "3/3",
+   "check_d_3.sh": "3/3",
+   "check_e_1.sh": "9/9",
+   "check_e_2.sh": "5/5",
+   "check_e_3.sh": "4/4",
+   "check_e_4.sh": "4/5"
+  },
+  "submitted_with_failures": [
+   "check_d_1.sh",
+   "check_e_4.sh"
+  ],
+  "exit_status": "LimitsExceeded"
+ },
+ "5.1:2": {
+  "job": "2026-11-07__23-05-03",
+  "calls": 73,
+  "cost": 0.7167,
+  "minutes": 5.6,
+  "check_commands": 12,
+  "check_runs": 12,
+  "runs_per_check": {
+   "regression.sh": 12
+  },
+  "last_seen": {
+   "regression.sh": "59 broken"
+  },
+  "submitted_with_failures": [
+   "regression.sh"
+  ],
+  "exit_status": "Submitted"
  }
 }

@@ -279,5 +279,145 @@
   "ab_breaks_after_clean": [],
   "rule_file_reads": 24,
   "spec_file_reads": 1
+ },
+ "2.2:2": {
+  "commands": 13,
+  "components": {
+   "d": {
+    "check_runs": 4,
+    "failing_runs": 1,
+    "steps_passed": 3
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 0,
+  "spec_file_reads": 1
+ },
+ "2.1:2": {
+  "commands": 40,
+  "components": {
+   "c": {
+    "check_runs": 23,
+    "failing_runs": 13,
+    "steps_passed": 5
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 4,
+  "spec_file_reads": 2
+ },
+ "1.2:2": {
+  "commands": 25,
+  "components": {
+   "d": {
+    "check_runs": 4,
+    "failing_runs": 2,
+    "steps_passed": 2
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 2,
+  "spec_file_reads": 1
+ },
+ "1.1:2": {
+  "commands": 63,
+  "components": {
+   "c": {
+    "check_runs": 16,
+    "failing_runs": 12,
+    "steps_passed": 4
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 6,
+  "spec_file_reads": 1
+ },
+ "3:2": {
+  "commands": 112,
+  "components": {
+   "c": {
+    "check_runs": 29,
+    "failing_runs": 24,
+    "steps_passed": 5
+   },
+   "d": {
+    "check_runs": 3,
+    "failing_runs": 0,
+    "steps_passed": 3
+   },
+   "e": {
+    "check_runs": 38,
+    "failing_runs": 32,
+    "steps_passed": 6
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 9,
+  "spec_file_reads": 3
+ },
+ "1.3:2": {
+  "commands": 110,
+  "components": {
+   "e": {
+    "check_runs": 2,
+    "failing_runs": 2,
+    "steps_passed": 0
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 8,
+  "spec_file_reads": 1
+ },
+ "2.3:2": {
+  "commands": 87,
+  "components": {
+   "e": {
+    "check_runs": 30,
+    "failing_runs": 21,
+    "steps_passed": 4
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 4,
+  "spec_file_reads": 0
+ },
+ "4:2": {
+  "commands": 202,
+  "components": {
+   "c": {
+    "check_runs": 35,
+    "failing_runs": 30,
+    "steps_passed": 5
+   },
+   "d": {
+    "check_runs": 6,
+    "failing_runs": 4,
+    "steps_passed": 2
+   },
+   "e": {
+    "check_runs": 19,
+    "failing_runs": 16,
+    "steps_passed": 3
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 7,
+  "spec_file_reads": 0
+ },
+ "5.1:2": {
+  "commands": 72,
+  "components": {},
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 4,
+  "spec_file_reads": 0
  }
 }

@@ -1,0 +1,19 @@
+{
+    "task": {
+        "path": "tasks/slack-clone-course/course-staff-files/final_task"
+    },
+    "trial_name": "final_task__Sh9zq9i",
+    "trials_dir": "/Users/rohit.ramesh/Desktop/Columbia/Courses/Advanced Software Dev with AI/course_milestone_2/tasks/slack-clone-course/jobs/2026-11-07__20-47-18",
+    "agent": {
+        "name": "mini_swe_agent_local:MiniSweAgentLocal",
+        "model_name": "openrouter/openai/gpt-5.6-luna",
+        "kwargs": {
+            "config_file": "/Users/rohit.ramesh/Desktop/Columbia/Courses/Advanced Software Dev with AI/course_milestone_2/tasks/slack-clone-course/course-staff-files/final_task/agent_llm_config/mswea-openrouter-gpt-5.6-luna-no-reasoning.yaml",
+            "cost_limit": 3
+        }
+    },
+    "verifier": {
+        "disable": true
+    },
+    "job_id": "8e44cb0b-d4aa-49f4-b166-f17b8a83dd21"
+}
