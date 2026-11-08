@@ -3,6 +3,7 @@
 Standard library only, so the checks run in any container without installing anything.
 """
 import base64
+import hashlib
 import http.client
 import json
 import os
@@ -21,6 +22,8 @@ RESTART = os.path.join(os.path.dirname(os.path.abspath(__file__)), "restart.sh")
 # Leaves headroom under the agent's 30 s per-command cap for Python start-up and output.
 TIME_LIMIT_S = 26
 PW = "correct-horse-1"
+# Each complete check run records its result here, with a fingerprint of /app, for ready.sh.
+RESULTS = "/tmp/spec_check_results.json"
 ISO_UTC = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$")
 USER_FIELDS = ("id", "username", "display_name", "timezone", "avatar_url", "status_text", "status_emoji")
 WORKSPACE_FIELDS = ("id", "slug", "name", "owner_id", "join_mode")
@@ -540,7 +543,74 @@ class Checker:
 def output_mode():
     if os.environ.get("CHECK_MODE") == "regression":
         return "regression"
-    return "score_only" if os.environ.get("FEEDBACK") == "score_only" else "verbose"
+    # The mode is set once in the lib.sh beside the check; reading it here means running the rule file
+    # directly gives the same output as the wrapper.
+    mode = os.environ.get("FEEDBACK")
+    try:
+        lib = open(os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "lib.sh")).read()
+        found = re.search(r"^FEEDBACK=(\w+)", lib, re.M)
+        mode = found.group(1) if found else mode
+    except OSError:
+        pass
+    return "score_only" if mode == "score_only" else "verbose"
+
+
+def app_fingerprint():
+    """Hash of the code in /app (not its data, logs or caches), so results can be tied to a version of it."""
+    h = hashlib.sha256()
+    for root, dirs, files in os.walk("/app"):
+        dirs[:] = sorted(d for d in dirs if d not in ("data", "__pycache__", ".git", "venv", ".venv", "node_modules"))
+        for f in sorted(files):
+            if f.endswith((".pyc", ".log", ".pid", ".db", ".db-wal", ".db-shm", ".sqlite", ".sqlite3")) or f == ".timer_start":
+                continue
+            path = os.path.join(root, f)
+            try:
+                h.update(path.encode() + b"\0" + open(path, "rb").read())
+            except OSError:
+                pass
+    return h.hexdigest()[:16]
+
+
+def save_result(name, passed, failed):
+    try:
+        results = json.load(open(RESULTS))
+    except (OSError, ValueError):
+        results = {}
+    results[name] = {"passed": passed, "failed": failed, "app": app_fingerprint(), "at": int(time.time())}
+    try:
+        json.dump(results, open(RESULTS, "w"))
+    except OSError:
+        pass
+
+
+def ready(spec="/spec"):
+    """Prints, for every check in /spec, whether its last complete run passed on the current /app."""
+    import glob
+    checks = sorted(glob.glob(os.path.join(spec, "*", "checks", "check_*.sh")),
+                    key=lambda p: [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", p)])
+    if os.path.exists(os.path.join(spec, "checks", "regression.sh")):
+        checks.insert(0, os.path.join(spec, "checks", "regression.sh"))
+    try:
+        results = json.load(open(RESULTS))
+    except (OSError, ValueError):
+        results = {}
+    now, todo = app_fingerprint(), []
+    for chk in checks:
+        r = results.get(chk)
+        if r is None:
+            todo.append(f"{chk}: not run yet")
+        elif r["app"] != now:
+            todo.append(f"{chk}: last run was before your latest change to /app; run it again")
+        elif r["failed"]:
+            todo.append(f"{chk}: " + (f"{r['failed']} broken" if chk.endswith("regression.sh")
+                                      else f"{r['passed']} passed, {r['failed']} failed"))
+    down = [p for p in (8000, 8001, 8002) if not healthy(p)]
+    if down:
+        todo.append(f"GET /api/health does not answer on {', '.join(map(str, down))}; run bash {RESTART}")
+    for line in todo:
+        print("NOT DONE " + line)
+    print("READY TO SUBMIT" if not todo else f"NOT READY: {len(todo)} item(s) above; fix or rerun them, then run this again")
+    return not todo
 
 
 def run(groups, argv, usage, labels=None):
@@ -605,6 +675,8 @@ def run(groups, argv, usage, labels=None):
             printed.add(note)
         for rid in missing:
             c.record(rid, False, f"not run (see NOTE above for {g[0]})")
+    if not wanted:  # only a complete run of a check counts for ready.sh, not a run of some of its groups
+        save_result(usage.split(" [")[0].split()[-1], c.passed, c.failed)
     if c.mode == "regression":
         print(f"REGRESSION: {c.failed} broken", flush=True)
     else:

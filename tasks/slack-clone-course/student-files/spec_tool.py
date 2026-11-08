@@ -82,6 +82,7 @@ def readme(run):
     if specs:
         out.append("| `common/architecture.md` | **Read second.** The design, `start.sh`, and the function names every step uses |")
     out += ["| `common/restart.sh` | Restarts the cluster and waits for all three nodes |",
+            "| `common/ready.sh` | The submit gate: lists any check not yet passed on your latest code |",
             "| `common/checklib.py` | Shared helpers the checks use (no need to read) |"]
     if regression:
         out += ["| `checks/regression.sh` | The A and B regression suite: prints each broken rule, then `REGRESSION: <n> broken` |",
@@ -150,7 +151,7 @@ def readme(run):
     else:
         ab_work = "A and B until `regression.sh` reports `REGRESSION: 0 broken`" if regression else "A.1 to A.4, then B.1 to B.5"
         out += [f"| 4 to 20 | {ab_work} |", "| 20 to 30 | C |", "| 30 to 34 | D |", "| 34 to 45 | E |"]
-    out += ["| last 5 | Stop adding features: restart, run every check, submit (see \"Before you submit\") |", "",
+    out += ["| last 5 | Stop adding features: restart, run every check, run `ready.sh`, submit (see \"Before you submit\") |", "",
             "If you fall more than 5 minutes behind, move on once the current step's check shows no more than 2",
             "failures, and come back to them at the end.", ""]
 
@@ -191,7 +192,8 @@ def readme(run):
     out += ["", "Do not start a step while a check from an earlier step fails (except under the time rule above).", ""]
 
     out += ["## How to verify", "", "Run each of these as a single command:", "", "```bash",
-            "bash /spec/common/restart.sh                 # after every code change (--fresh after a schema change)"]
+            "bash /spec/common/restart.sh                 # after every code change (--fresh after a schema change)",
+            "bash /spec/common/ready.sh                   # what is still failing or not rerun since your last change"]
     if regression:
         out.append("bash /spec/checks/regression.sh              # every A and B rule")
     for x in order:
@@ -225,7 +227,10 @@ def readme(run):
         L, _, steps, _ = COMP[x]
         res = ", ".join(f"`check_{x}_{i + 1}.sh` {v}" for i, v in enumerate(STEP_RESULTS[x]))
         out.append(f"- every {L} check, run one at a time, ends with `0 failed` ({res} rules);")
-    out += ["- `GET /api/health` returns `200` on ports `8000`, `8001` and `8002`.", "",
+    out += ["- `GET /api/health` returns `200` on ports `8000`, `8001` and `8002`;",
+            "- `bash /spec/common/ready.sh` prints `READY TO SUBMIT`. It records every complete check run against",
+            "  the current code in `/app`, so it lists any check that is failing, or that you have not rerun since your",
+            "  last change. If it prints `NOT READY`, rerun or fix what it lists; do not submit.", "",
             "**Time-out rule:** when `bash /app/timer.sh` shows `0:04` or less, stop adding features. Run",
             "`restart.sh`, confirm all three nodes answer `/api/health`, and submit. Never submit while the cluster",
             "does not boot.", "",
@@ -271,7 +276,7 @@ def build_run(run):
     dst = os.path.join(COPIES, run)
     shutil.rmtree(dst, ignore_errors=True)
     os.makedirs(os.path.join(dst, "common"))
-    for f in ("checklib.py", "restart.sh") + (("architecture.md",) if specs else ()):
+    for f in ("checklib.py", "restart.sh", "ready.sh") + (("architecture.md",) if specs else ()):
         shutil.copy2(os.path.join(SRC, "common", f), os.path.join(dst, "common", f))
     if ab == "plain":
         for x in "ab":

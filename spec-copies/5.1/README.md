@@ -16,6 +16,7 @@ change it; they say what to build now, in what order, and how to prove it works.
 | `README.md` | This file: scope, order, time plan, how to verify, when to submit |
 | `common/architecture.md` | **Read second.** The design, `start.sh`, and the function names every step uses |
 | `common/restart.sh` | Restarts the cluster and waits for all three nodes |
+| `common/ready.sh` | The submit gate: lists any check not yet passed on your latest code |
 | `common/checklib.py` | Shared helpers the checks use (no need to read) |
 | `checks/regression.sh` | The A and B regression suite: prints each broken rule, then `REGRESSION: <n> broken` |
 | `checks/regression_rules.py` | The rule code the regression suite runs |
@@ -58,7 +59,7 @@ feature while a check elsewhere is still failing.
 | 20 to 30 | C |
 | 30 to 34 | D |
 | 34 to 45 | E |
-| last 5 | Stop adding features: restart, run every check, submit (see "Before you submit") |
+| last 5 | Stop adding features: restart, run every check, run `ready.sh`, submit (see "Before you submit") |
 
 If you fall more than 5 minutes behind, move on once the current step's check shows no more than 2
 failures, and come back to them at the end.
@@ -80,6 +81,7 @@ Run each of these as a single command:
 
 ```bash
 bash /spec/common/restart.sh                 # after every code change (--fresh after a schema change)
+bash /spec/common/ready.sh                   # what is still failing or not rerun since your last change
 bash /spec/checks/regression.sh              # every A and B rule
 bash /spec/c/checks/check_c_1.sh            # likewise check_c_2.sh ... check_c_5.sh
 bash /spec/d/checks/check_d_1.sh            # likewise check_d_2.sh ... check_d_3.sh
@@ -120,7 +122,10 @@ you actually saw after your last code change and a `restart.sh`:
 - every C check, run one at a time, ends with `0 failed` (`check_c_1.sh` 9, `check_c_2.sh` 8, `check_c_3.sh` 6, `check_c_4.sh` 7, `check_c_5.sh` 4 rules);
 - every D check, run one at a time, ends with `0 failed` (`check_d_1.sh` 8, `check_d_2.sh` 3, `check_d_3.sh` 3 rules);
 - every E check, run one at a time, ends with `0 failed` (`check_e_1.sh` 9, `check_e_2.sh` 5, `check_e_3.sh` 4, `check_e_4.sh` 5, `check_e_5.sh` 7, `check_e_6.sh` 7 rules);
-- `GET /api/health` returns `200` on ports `8000`, `8001` and `8002`.
+- `GET /api/health` returns `200` on ports `8000`, `8001` and `8002`;
+- `bash /spec/common/ready.sh` prints `READY TO SUBMIT`. It records every complete check run against
+  the current code in `/app`, so it lists any check that is failing, or that you have not rerun since your
+  last change. If it prints `NOT READY`, rerun or fix what it lists; do not submit.
 
 **Time-out rule:** when `bash /app/timer.sh` shows `0:04` or less, stop adding features. Run
 `restart.sh`, confirm all three nodes answer `/api/health`, and submit. Never submit while the cluster
