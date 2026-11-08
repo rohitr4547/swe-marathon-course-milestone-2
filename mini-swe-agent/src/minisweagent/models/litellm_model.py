@@ -39,6 +39,9 @@ class LitellmModelConfig(BaseModel):
     """Override input token price (USD/token) for cost tracking when the model isn't in litellm's price map (e.g. a Bedrock inference-profile ARN)."""
     output_cost_per_token: float | None = None
     """Override output token price (USD/token) for cost tracking when the model isn't in litellm's price map (e.g. a Bedrock inference-profile ARN)."""
+    cache_read_cost_per_token: float | None = None
+    """Price (USD/token) of cached prompt tokens. When set with the two overrides above, cached tokens are billed
+    at this price instead of the full input price, matching what the provider actually charges."""
     format_error_template: str = "{{ error }}"
     """Template used when the LM's output is not in the expected format."""
     observation_template: str = (
@@ -114,6 +117,17 @@ class LitellmModel:
         # in litellm's price map, so completion_cost() raises "not mapped". If explicit per-token
         # prices are configured, pass them through as custom_cost_per_token to price such models.
         custom_cost_per_token = None
+        if None not in (self.config.input_cost_per_token, self.config.output_cost_per_token, self.config.cache_read_cost_per_token):
+            # Nearly all prompt tokens in a long run are cache reads; full input price overstates the charge.
+            usage = getattr(response, "usage", None) or {}
+            get = usage.get if isinstance(usage, dict) else lambda k, d=None: getattr(usage, k, d)
+            details = get("prompt_tokens_details") or {}
+            cached = (details.get("cached_tokens") if isinstance(details, dict) else getattr(details, "cached_tokens", 0)) or 0
+            prompt, completion = get("prompt_tokens", 0) or 0, get("completion_tokens", 0) or 0
+            cost = ((prompt - cached) * self.config.input_cost_per_token + cached * self.config.cache_read_cost_per_token
+                    + completion * self.config.output_cost_per_token)
+            if cost > 0.0:
+                return {"cost": cost}
         if self.config.input_cost_per_token is not None and self.config.output_cost_per_token is not None:
             custom_cost_per_token = {
                 "input_cost_per_token": self.config.input_cost_per_token,

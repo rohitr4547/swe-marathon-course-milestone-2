@@ -117,6 +117,10 @@ model:
   # prices (litellm_textbased -> custom_cost_per_token).
   input_cost_per_token: 2.2e-07
   output_cost_per_token: 1.32e-06
+  # Cached prompt tokens are billed at a tenth of the input price; nearly every prompt token in a long run is
+  # cached, and ignoring that put the estimate about 8 times above OpenRouter's actual charge, so the $3 limit
+  # stopped runs at roughly $0.40 of real spend.
+  cache_read_cost_per_token: 2.2e-08
   format_error_template: |-
     {% if finish_reason is defined and finish_reason in ["length", "tool_calls"] -%}
     Your previous response reached the output token limit (finish_reason={{ finish_reason }}) before you produced a complete action, so it was cut off. Respond more concisely and provide exactly one action in the required format. If you need to think more, do so briefly.
