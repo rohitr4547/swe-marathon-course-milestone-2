@@ -118,6 +118,8 @@ in `/app`, not the check.
 - Check the JSON type of every body field: bad input is a `400`, never a `500`.
 - Never open `alert`, `confirm` or `prompt` in the UI, and put every pinned `data-testid` in the HTML
   that `GET /` serves before any JavaScript runs.
+- Keep all UI behaviour in `static/app.js`, one handler per control. To fix a UI flow, replace its
+  function in place; never append another `<script>`, handler or override on top of the old one.
 - Keep `/app` bootable at every moment: the grader runs `pip install -r /app/requirements.txt` and
   `/app/start.sh` in a fresh container. Anything installed by hand is not there.
 

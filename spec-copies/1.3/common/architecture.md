@@ -11,9 +11,10 @@ a different design: there is no time to debug one.
 | `start.sh` | The supervisor below. Stays in the foreground. |
 | `requirements.txt` | `aiohttp==3.10.10` and `tzdata==2024.2`. Run `pip install -r /app/requirements.txt` once. |
 | `core.py` | SQLite schema and every domain function (no HTTP code). `python3 /app/core.py --init-db` creates the tables. |
-| `server.py` | aiohttp app: HTTP routes, the WebSocket and `GET /` on the same port. `python3 /app/server.py --node N` listens on `127.0.0.1:800N`. |
+| `server.py` | aiohttp app: HTTP routes, the WebSocket, `GET /` and `GET /app.js` on the same port. `python3 /app/server.py --node N` listens on `127.0.0.1:800N`. |
 | `irc.py` | IRC gateway on `0.0.0.0:6667`. Imports `core`. |
-| `static/index.html` | The whole web UI: one HTML file with inline CSS and plain JavaScript (no build step, no CDN). |
+| `static/index.html` | The UI page: markup and inline CSS holding every pinned `data-testid`, and exactly one script element, `<script src="/app.js"></script>`, just before `</body>`. No build step, no CDN. |
+| `static/app.js` | All UI behaviour in one plain-JavaScript file, served at `GET /app.js` as `application/javascript`: an `api()` helper, one function per flow, and an `init()` that binds each control exactly once. |
 
 ## start.sh (use exactly this)
 
@@ -106,3 +107,11 @@ A reply that is cut off is rejected and wasted. Write `core.py`, `server.py` and
 `static/index.html` in several commands of at most about 250 lines each (`cat > file <<'EOF'`
 for the first part, then `cat >> file <<'EOF'`), and run `python3 -m py_compile` on the Python
 files after each part.
+
+The UI is the one place where appending goes wrong. Write `index.html` once, with every hook, and
+never add a second `<script>` to it. In `app.js`, never append another handler, override or guard for
+a control that already has one: two click handlers on `send-btn` post twice, and each later patch hides
+the earlier bug instead of fixing it. To change a flow, replace its function in place
+(`python3 - <<'PY'` with `assert old in s` and `s.replace(old, new)`), or rewrite `app.js` from the top
+with every flow it already had. After any UI change, rerun `check_e_4.sh`, `check_e_5.sh` and
+`check_e_6.sh`.
