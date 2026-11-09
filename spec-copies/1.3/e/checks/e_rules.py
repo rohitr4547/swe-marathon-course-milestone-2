@@ -9,7 +9,7 @@ import sys
 import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "common"))
-from checklib import (IRC, ISO_UTC, WS, Fail, api, events_text, fetch, healthy, kill_port,  # noqa: E402
+from checklib import (IRC, output_mode, ISO_UTC, WS, Fail, api, events_text, fetch, healthy, kill_port,  # noqa: E402
                       make_channel, make_workspace, must_join, must_post, post, raw_post, register, run, same,
                       short, uniq, wait_until, PW)
 
@@ -247,10 +247,16 @@ class Browser:
         self.page.set_default_timeout(4000)
         self.dialogs = []
         self.page.on("dialog", lambda d: (self.dialogs.append(d.type), d.dismiss()))
+        # Uncaught JavaScript errors, shown in verbose mode: a script that throws looks like a missing element.
+        self.errors = []
+        self.page.on("pageerror", lambda e: self.errors.append(str(e).splitlines()[0][:160]))
         self.page.goto("http://127.0.0.1:8000/", wait_until="domcontentloaded")
         return self
 
     def __exit__(self, *exc):
+        if self.errors and output_mode() == "verbose":
+            seen = list(dict.fromkeys(self.errors))
+            print(f"NOTE uncaught JavaScript errors in the page: {' | '.join(seen[:3])}", flush=True)
         try:
             self.browser.close()
         finally:

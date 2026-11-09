@@ -14,7 +14,7 @@ a different design: there is no time to debug one.
 | `server.py` | aiohttp app: HTTP routes, the WebSocket, `GET /` and `GET /app.js` on the same port. `python3 /app/server.py --node N` listens on `127.0.0.1:800N`. |
 | `irc.py` | IRC gateway on `0.0.0.0:6667`. Imports `core`. |
 | `static/index.html` | The UI page: markup and inline CSS holding every pinned `data-testid`, and exactly one script element, `<script src="/app.js"></script>`, just before `</body>`. No build step, no CDN. |
-| `static/app.js` | All UI behaviour in one plain-JavaScript file, served at `GET /app.js` as `application/javascript`: an `api()` helper, one function per flow, and an `init()` that binds each control exactly once. |
+| `static/app.js` | All UI behaviour in one plain-JavaScript file, served at `GET /app.js` as `application/javascript`: an `api()` helper, one function per flow, and an `init()` that binds each control exactly once. Declare `state`, `api()` and every function at the top level of the file, never inside an IIFE or another closure, so a replacement function can reach them. |
 
 ## start.sh (use exactly this)
 
