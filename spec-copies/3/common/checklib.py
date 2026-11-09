@@ -583,6 +583,32 @@ def save_result(name, passed, failed):
         pass
 
 
+def boot_problems():
+    """Listeners that the grader's fresh container would not have: a port nobody serves, or one served by a
+    process started by hand instead of by the start.sh that restart.sh launched."""
+    try:
+        pgid = int(open("/tmp/spec_cluster.pgid").read().strip())
+    except (OSError, ValueError):
+        return [f"the cluster was not started by bash {RESTART}; run it"]
+    ports = [8000, 8001, 8002] + ([6667] if os.path.exists("/app/irc.py") else [])
+    out = []
+    for port in ports:
+        ss = subprocess.run(["ss", "-ltnpH", f"sport = :{port}"], capture_output=True, text=True).stdout
+        pids = sorted(set(int(p) for p in re.findall(r"pid=(\d+)", ss)))
+        if not pids:
+            if port == 6667:
+                out.append("nothing listens on 6667 although /app/irc.py exists: start.sh must start the IRC gateway")
+            continue
+        for pid in pids:
+            try:
+                if os.getpgid(pid) != pgid:
+                    out.append(f"port {port} is served by pid {pid}, which start.sh did not start; the grader runs only"
+                               f" start.sh, so start every service from it and use bash {RESTART}")
+            except OSError:
+                pass
+    return out
+
+
 def ready(spec="/spec"):
     """Prints, for every check in /spec, whether its last complete run passed on the current /app."""
     import glob
@@ -607,6 +633,7 @@ def ready(spec="/spec"):
     down = [p for p in (8000, 8001, 8002) if not healthy(p)]
     if down:
         todo.append(f"GET /api/health does not answer on {', '.join(map(str, down))}; run bash {RESTART}")
+    todo += boot_problems()
     for line in todo:
         print("NOT DONE " + line)
     print("READY TO SUBMIT" if not todo else f"NOT READY: {len(todo)} item(s) above; fix or rerun them, then run this again")

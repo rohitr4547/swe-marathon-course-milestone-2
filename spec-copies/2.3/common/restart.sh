@@ -42,6 +42,16 @@ for _ in $(seq 1 40); do
   done
   if [ "$up" = 1 ]; then
     echo "cluster up: 8000 8001 8002 answer /api/health"
+    # Once irc.py exists, start.sh must also bring up the gateway: nothing else will in the grader's container.
+    if [ -f /app/irc.py ]; then
+      for _ in $(seq 1 20); do
+        [ -n "$(ss -ltnH 'sport = :6667' 2>/dev/null)" ] && { echo "IRC gateway up: 6667 listens"; exit 0; }
+        sleep 0.5
+      done
+      echo "IRC gateway NOT up: /app/irc.py exists but start.sh did not bring up 6667 within 10 s. Last lines of /tmp/start.log:"
+      tail -n 20 /tmp/start.log
+      exit 1
+    fi
     exit 0
   fi
   sleep 0.5

@@ -121,7 +121,8 @@ in `/app`, not the check.
 - Keep all UI behaviour in `static/app.js`, one handler per control. To fix a UI flow, replace its
   function in place; never append another `<script>`, handler or override on top of the old one.
 - Keep `/app` bootable at every moment: the grader runs `pip install -r /app/requirements.txt` and
-  `/app/start.sh` in a fresh container. Anything installed by hand is not there.
+  `/app/start.sh` in a fresh container. Anything installed or started by hand is not there, so start
+  every service, the IRC gateway included, from `start.sh`, and start `start.sh` only through `restart.sh`.
 
 ## Before you submit
 

@@ -1,0 +1,47 @@
+(()=>{
+const $=s=>document.querySelector(s), tokenKey='huddle.token';
+let signup=false, token=localStorage.getItem(tokenKey)||new URLSearchParams(location.search).get('token'), workspace=null, channel=null;if(token)localStorage.setItem(tokenKey,token);
+const api=async(path,opt={})=>{opt.headers=Object.assign({'Content-Type':'application/json'},opt.headers||{});if(token)opt.headers.Authorization='Bearer '+token;let r=await fetch('/api'+path,opt),j={};try{j=await r.json()}catch{};if(!r.ok)throw Object.assign(new Error(j.error||'Request failed'),{status:r.status});return j};
+const err=(id,msg)=>{let x=$('#'+id);if(x){x.textContent=msg;x.style.display=msg?'block':'none'}};
+function showAuth(){if($('#auth-modal'))$('#auth-modal').hidden=false;if($('#auth-form'))$('#auth-form').hidden=false;if($('#workspace-create-form')){$('#workspace-create-form').classList.remove('hidden');$('#workspace-create-form').hidden=false;}if($('#join-workspace-form'))$('#join-workspace-form').classList.add('hidden')}
+function hideAuth(){if($('#auth-form'))$('#auth-form').hidden=true}
+function renderChannels(chs){let box=$('#channel-list');box.innerHTML='';chs.forEach(c=>{let e=document.createElement('button');e.className='channel-entry';e.dataset.testid='channel-entry';e.dataset.channelId=c.id;e.dataset.channelName=c.name;e.textContent='#'+c.name;e.onclick=()=>selectChannel(c);box.appendChild(e)})}
+async function selectChannel(c){if(workspace&&workspace.workspace){try{let fresh=await api('/workspaces/'+workspace.workspace.slug);let fc=(fresh.channels||[]).find(x=>x.id===c.id);if(fc)c=fc}catch{}}channel=c;sessionStorage.setItem('huddle.channel',String(c.id));$('#channel-title').textContent='# '+c.name;$('#channel-topic').textContent=c.topic||'';$('#channel-empty-state').textContent='No messages in this channel yet.';$('#channel-empty-state').style.display='block';await loadMessages()}
+async function loadMessages(){if(!channel)return;try{let j=await api(`/channels/${channel.id}/messages`),box=$('#message-list');box.innerHTML='';let ms=j.messages||[];if(!ms){ms=[]}if(!ms.length){let e=document.createElement('div');e.dataset.testid='channel-empty-state';e.textContent='No messages in this channel yet.';box.appendChild(e)}else ms.reverse().forEach(renderMessage)}catch(e){console.error(e)}}
+function renderMessage(m){
+ let row=document.createElement('div');row.dataset.testid='message';row.dataset.messageId=m.id;
+ let a=document.createElement('span');a.dataset.testid='message-avatar';a.textContent='● ';
+ let n=document.createElement('span');n.dataset.testid='message-author';n.textContent=(m.author||{}).display_name||'User';
+ let t=document.createElement('span');t.dataset.testid='message-time';t.textContent=' '+new Date(m.created_at).toLocaleString();
+ let b=document.createElement('div');b.dataset.testid='message-body';b.textContent=m.body;
+ let toolbar=document.createElement('div');toolbar.className='toolbar';
+ let edit=document.createElement('button');edit.dataset.testid='edit-message-btn';edit.textContent='Edit';
+ let del=document.createElement('button');del.dataset.testid='delete-message-btn';del.textContent='Delete';
+ let thread=document.createElement('button');thread.dataset.testid='open-thread-btn';let count=document.createElement('span');count.dataset.testid='reply-count';count.textContent=(m.reply_count||0)+' '+((m.reply_count||0)==1?'reply':'replies');thread.appendChild(count);
+ let react=document.createElement('button');react.dataset.testid='reaction-button';react.textContent='😀';
+ toolbar.append(edit,del,thread,react);
+ edit.onclick=()=>{
+  let box=document.createElement('input');box.dataset.testid='edit-message-input';box.value=m.body;row.insertBefore(box,b);box.focus();
+  box.onkeydown=async e=>{if(e.key!=='Enter')return;let v=box.value.trim();if(!v)return;try{let j=await api('/messages/'+m.id,{method:'PATCH',body:JSON.stringify({body:v})});m=j.message;b.textContent=m.body;box.remove();let ed=row.querySelector('[data-testid="message-edited"]');if(!ed){ed=document.createElement('span');ed.dataset.testid='message-edited';row.appendChild(ed)}ed.textContent=' (edited)'}catch{}};
+};
+ del.onclick=async()=>{try{await api('/messages/'+m.id,{method:'DELETE'});row.remove()}catch{}};
+ thread.onclick=async()=>{
+ let panel=$('#thread-panel');panel.hidden=false;panel.dataset.parentId=m.id;let old=panel.querySelector('.thread-replies');if(old)old.remove();let list=document.createElement('div');list.className='thread-replies';panel.insertBefore(list,$('#thread-input'));
+ try{let j=await api('/messages/'+m.id+'/replies');(j.replies||[]).forEach(x=>{let q=document.createElement('div');q.textContent=x.body;list.appendChild(q)})}catch{}
+ let inp=$('#thread-input'),send=$('#thread-send');send.onclick=async()=>{if(!inp.value.trim())return;try{let j=await api('/channels/'+channel.id+'/messages',{method:'POST',body:JSON.stringify({body:inp.value,parent_id:m.id})});let q=document.createElement('div');q.textContent=j.message.body;list.appendChild(q);inp.value='';m.reply_count=(m.reply_count||0)+1;count.textContent=m.reply_count+' '+(m.reply_count==1?'reply':'replies')}catch{}};
+};
+ react.onclick=()=>{let picker=document.createElement('div');picker.dataset.testid='emoji-picker';['😀','👍','❤️','🎉','🚀','😂'].forEach(e=>{let o=document.createElement('button');o.dataset.testid='emoji-option';o.textContent=e;o.onclick=async()=>{try{await api('/messages/'+m.id+'/reactions',{method:'POST',body:JSON.stringify({emoji:e})});let chip=document.createElement('span');chip.dataset.testid='reaction-chip';chip.textContent=e+' 1';row.appendChild(chip);picker.remove()}catch{}};picker.appendChild(o)});row.appendChild(picker)};
+ row.append(a,n,t,b,toolbar);if(m.edited_at){let ed=document.createElement('span');ed.dataset.testid='message-edited';ed.textContent=' (edited)';row.appendChild(ed)}$('#message-list').appendChild(row)
+}
+async function loadWorkspace(){let f=$('#workspace-create-form');let w=(await api('/workspaces')).workspaces||[];if(!w.length){f.classList.remove('hidden');f.hidden=false;f.style.display='block';f.style.visibility='visible';return}f.classList.remove('hidden');f.hidden=false;f.style.display='block';workspace=await api('/workspaces/'+w[0].slug);$('#workspace-header').textContent=workspace.workspace.name;renderChannels(workspace.channels||[]);let saved=Number(sessionStorage.getItem('huddle.channel'));let chosen=(workspace.channels||[]).find(c=>c.id===saved)||(workspace.channels||[])[0];if(chosen)await selectChannel(chosen)}
+async function auth(e){e.preventDefault();let f=$('#auth-form'),b={username:f.username.value,password:f.password.value};if(signup)b.display_name=b.username.value;try{let j=await api(signup?'/auth/register':'/auth/login',{method:'POST',body:JSON.stringify(b)});token=j.token;localStorage.setItem(tokenKey,token);hideAuth();$('#workspace-create-form').classList.remove('hidden');$('#workspace-create-form').hidden=false;$('#workspace-create-form').style.display='block';$('#workspace-create-form').style.visibility='visible';$('#current-user').textContent=(j.user||{}).display_name||b.username;await loadWorkspace()}catch(x){err('auth-error',x.message)}}
+$('#auth-form').onsubmit=auth;
+$('#auth-toggle').onclick=()=>{signup=!signup;$('#auth-form').dataset.mode=signup?'signup':'login';$('#auth-submit').textContent=signup?'Sign up':'Sign in';err('auth-error','')};
+$('#workspace-create-form').onsubmit=async e=>{e.preventDefault();let f=e.currentTarget;try{let j=await api('/workspaces',{method:'POST',body:JSON.stringify({slug:f.slug.value,name:f.name.value})});workspace={workspace:j.workspace,channels:[j.general_channel]};$('#workspace-header').textContent=j.workspace.name;renderChannels(workspace.channels);selectChannel(j.general_channel);f.classList.remove('hidden')}catch(x){err('create-channel-error',x.message)}};
+document.querySelectorAll('[data-testid="empty-state-create-workspace"]').forEach(x=>x.onclick=()=>{$('#workspace-create-form').classList.remove('hidden');$('#workspace-create-form').hidden=false});$('#new-channel-btn').onclick=()=>$('#create-channel-modal').hidden=false;
+$('#create-channel-cancel').onclick=()=>$('#create-channel-modal').hidden=true;
+$('#create-channel-form').onsubmit=async e=>{e.preventDefault();let f=e.currentTarget;try{let j=await api('/workspaces/'+workspace.workspace.slug+'/channels',{method:'POST',body:JSON.stringify({name:f.name.value,is_private:$('#create-channel-private').checked})});workspace.channels.push(j.channel);renderChannels(workspace.channels);selectChannel(j.channel);$('#create-channel-modal').hidden=true;err('create-channel-error','')}catch(x){err('create-channel-error',x.message)}};
+$('#close-thread').onclick=()=>{$('#thread-panel').hidden=true};$('#logout-btn').onclick=()=>{token=null;localStorage.removeItem(tokenKey);showAuth()};
+$('#send-btn').onclick=async e=>{e.preventDefault();let x=$('#message-input');if(!x.value.trim()||!channel)return;try{let j=await api(`/channels/${channel.id}/messages`,{method:'POST',body:JSON.stringify({body:x.value})});x.value='';renderMessage(j.message)}catch{}};
+setInterval(()=>{if(token && !workspace && $('#auth-form').hidden){let f=$('#workspace-create-form');if(f){f.classList.remove('hidden');f.hidden=false}}},100);if(token){$('#auth-form').dataset.mode='login';hideAuth();api('/auth/me').then(j=>{$('#current-user').textContent=j.user.display_name;return loadWorkspace()}).catch(()=>{token=null;localStorage.removeItem(tokenKey);showAuth()})}else showAuth();
+})();
