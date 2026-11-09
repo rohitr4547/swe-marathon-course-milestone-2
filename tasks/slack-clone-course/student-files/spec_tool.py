@@ -274,10 +274,40 @@ def copy_component(dst, x, with_specs, with_checks, mode):
         open(lib, "w").write(s.replace("FEEDBACK=verbose   # or: score_only", f"FEEDBACK={mode}   # or: {'verbose' if mode == 'score_only' else 'score_only'}"))
 
 
+def sync_tree(src, dst, keep=(".gitkeep",)):
+    """Makes dst hold exactly the files of src, writing only files whose bytes or mode differ and removing only
+    files src lacks. The repo sits in an iCloud-synced folder, where deleting and recreating a whole tree makes
+    iCloud leave "name 2" conflict copies; rewriting only what changed avoids that."""
+    want = set(files_in(src))
+    for rel in set(files_in(dst)) - want:
+        if os.path.basename(rel) not in keep:
+            os.remove(os.path.join(dst, rel))
+    for rel in sorted(want):
+        a, b = os.path.join(src, rel), os.path.join(dst, rel)
+        same = os.path.isfile(b) and open(a, "rb").read() == open(b, "rb").read()
+        if not same:
+            os.makedirs(os.path.dirname(b), exist_ok=True)
+            shutil.copyfile(a, b)
+        if not same or (os.stat(a).st_mode & 0o777) != (os.stat(b).st_mode & 0o777):
+            shutil.copymode(a, b)
+    for dp, dn, fs in sorted(os.walk(dst, topdown=False)):
+        if dp != dst and not os.listdir(dp):
+            os.rmdir(dp)
+
+
 def build_run(run):
+    import tempfile
+    tmp = tempfile.mkdtemp(prefix="spec-build-")
+    try:
+        build_run_into(run, os.path.join(tmp, run))
+        os.makedirs(os.path.join(COPIES, run), exist_ok=True)
+        sync_tree(os.path.join(tmp, run), os.path.join(COPIES, run))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def build_run_into(run, dst):
     comps, mode, specs, ab = RUNS[run]
-    dst = os.path.join(COPIES, run)
-    shutil.rmtree(dst, ignore_errors=True)
     os.makedirs(os.path.join(dst, "common"))
     for f in ("checklib.py", "restart.sh", "ready.sh") + (("architecture.md",) if specs else ()):
         shutil.copy2(os.path.join(SRC, "common", f), os.path.join(dst, "common", f))
@@ -410,12 +440,7 @@ def cmd_stage(run):
     src = os.path.join(COPIES, run)
     if not os.path.isdir(src):
         die("run 'build' first")
-    for e in spec_entries():
-        p = os.path.join(SPECS, e)
-        shutil.rmtree(p) if os.path.isdir(p) else os.remove(p)
-    for e in os.listdir(src):
-        s, d = os.path.join(src, e), os.path.join(SPECS, e)
-        shutil.copytree(s, d) if os.path.isdir(s) else shutil.copy2(s, d)
+    sync_tree(src, SPECS)
     cmd_verify(run)
     if os.path.realpath(LINK) != SPECS:
         if os.path.lexists(LINK):
