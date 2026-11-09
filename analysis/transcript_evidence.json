@@ -1,287 +1,6 @@
 {
- "5.3:1": {
-  "commands": 142,
-  "components": {
-   "a": {
-    "check_runs": 14,
-    "failing_runs": 6,
-    "steps_passed": 4
-   },
-   "b": {
-    "check_runs": 17,
-    "failing_runs": 7,
-    "steps_passed": 5
-   },
-   "c": {
-    "check_runs": 19,
-    "failing_runs": 9,
-    "steps_passed": 5
-   },
-   "d": {
-    "check_runs": 6,
-    "failing_runs": 0,
-    "steps_passed": 3
-   },
-   "e": {
-    "check_runs": 34,
-    "failing_runs": 22,
-    "steps_passed": 6
-   }
-  },
-  "ab_first_clean_cmd": 45,
-  "ab_breaks_after_clean": [
-   {
-    "cmd": 135,
-    "check": "b_1",
-    "during": "E.6",
-    "rules": [
-     "B1.6"
-    ]
-   }
-  ],
-  "rule_file_reads": 16,
-  "spec_file_reads": 4
- },
- "5.3:2": {
-  "commands": 117,
-  "components": {
-   "a": {
-    "check_runs": 12,
-    "failing_runs": 8,
-    "steps_passed": 4
-   },
-   "b": {
-    "check_runs": 20,
-    "failing_runs": 15,
-    "steps_passed": 5
-   },
-   "c": {
-    "check_runs": 17,
-    "failing_runs": 12,
-    "steps_passed": 5
-   },
-   "d": {
-    "check_runs": 3,
-    "failing_runs": 0,
-    "steps_passed": 3
-   },
-   "e": {
-    "check_runs": 21,
-    "failing_runs": 15,
-    "steps_passed": 6
-   }
-  },
-  "ab_first_clean_cmd": 52,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 16,
-  "spec_file_reads": 1
- },
- "5.2:1": {
-  "commands": 95,
-  "components": {
-   "c": {
-    "check_runs": 15,
-    "failing_runs": 6,
-    "steps_passed": 5
-   },
-   "d": {
-    "check_runs": 6,
-    "failing_runs": 0,
-    "steps_passed": 3
-   },
-   "e": {
-    "check_runs": 18,
-    "failing_runs": 6,
-    "steps_passed": 6
-   }
-  },
-  "ab_first_clean_cmd": 36,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 8,
-  "spec_file_reads": 16
- },
- "5.2:2": {
-  "commands": 135,
-  "components": {
-   "c": {
-    "check_runs": 21,
-    "failing_runs": 11,
-    "steps_passed": 5
-   },
-   "d": {
-    "check_runs": 6,
-    "failing_runs": 0,
-    "steps_passed": 3
-   },
-   "e": {
-    "check_runs": 32,
-    "failing_runs": 20,
-    "steps_passed": 6
-   }
-  },
-  "ab_first_clean_cmd": 54,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 6,
-  "spec_file_reads": 8
- },
- "5.1:1": {
-  "commands": 135,
-  "components": {
-   "c": {
-    "check_runs": 14,
-    "failing_runs": 4,
-    "steps_passed": 5
-   },
-   "d": {
-    "check_runs": 6,
-    "failing_runs": 0,
-    "steps_passed": 3
-   },
-   "e": {
-    "check_runs": 22,
-    "failing_runs": 10,
-    "steps_passed": 6
-   }
-  },
-  "ab_first_clean_cmd": 56,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 8,
-  "spec_file_reads": 14
- },
- "3:1": {
-  "commands": 88,
-  "components": {
-   "c": {
-    "check_runs": 28,
-    "failing_runs": 16,
-    "steps_passed": 5
-   },
-   "d": {
-    "check_runs": 6,
-    "failing_runs": 0,
-    "steps_passed": 3
-   },
-   "e": {
-    "check_runs": 26,
-    "failing_runs": 14,
-    "steps_passed": 6
-   }
-  },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 10,
-  "spec_file_reads": 1
- },
- "4:1": {
-  "commands": 125,
-  "components": {
-   "c": {
-    "check_runs": 23,
-    "failing_runs": 13,
-    "steps_passed": 5
-   },
-   "d": {
-    "check_runs": 7,
-    "failing_runs": 1,
-    "steps_passed": 3
-   },
-   "e": {
-    "check_runs": 38,
-    "failing_runs": 26,
-    "steps_passed": 6
-   }
-  },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 10,
-  "spec_file_reads": 0
- },
- "2.1:1": {
-  "commands": 44,
-  "components": {
-   "c": {
-    "check_runs": 20,
-    "failing_runs": 10,
-    "steps_passed": 5
-   }
-  },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 6,
-  "spec_file_reads": 1
- },
- "1.1:1": {
-  "commands": 80,
-  "components": {
-   "c": {
-    "check_runs": 36,
-    "failing_runs": 21,
-    "steps_passed": 5
-   }
-  },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 5,
-  "spec_file_reads": 1
- },
  "2.2:1": {
-  "commands": 27,
-  "components": {
-   "d": {
-    "check_runs": 12,
-    "failing_runs": 0,
-    "steps_passed": 3
-   }
-  },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 2,
-  "spec_file_reads": 1
- },
- "1.2:1": {
-  "commands": 50,
-  "components": {
-   "d": {
-    "check_runs": 18,
-    "failing_runs": 3,
-    "steps_passed": 3
-   }
-  },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 1,
-  "spec_file_reads": 1
- },
- "2.3:1": {
-  "commands": 106,
-  "components": {
-   "e": {
-    "check_runs": 48,
-    "failing_runs": 37,
-    "steps_passed": 6
-   }
-  },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 8,
-  "spec_file_reads": 1
- },
- "1.3:1": {
-  "commands": 81,
-  "components": {
-   "e": {
-    "check_runs": 19,
-    "failing_runs": 13,
-    "steps_passed": 6
-   }
-  },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 24,
-  "spec_file_reads": 1
- },
- "2.2:2": {
-  "commands": 13,
+  "commands": 11,
   "components": {
    "d": {
     "check_runs": 4,
@@ -294,27 +13,13 @@
   "rule_file_reads": 0,
   "spec_file_reads": 1
  },
- "2.1:2": {
-  "commands": 40,
-  "components": {
-   "c": {
-    "check_runs": 23,
-    "failing_runs": 13,
-    "steps_passed": 5
-   }
-  },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 4,
-  "spec_file_reads": 2
- },
- "1.2:2": {
-  "commands": 25,
+ "2.2:2": {
+  "commands": 34,
   "components": {
    "d": {
-    "check_runs": 4,
-    "failing_runs": 2,
-    "steps_passed": 2
+    "check_runs": 9,
+    "failing_runs": 6,
+    "steps_passed": 3
    }
   },
   "ab_first_clean_cmd": null,
@@ -322,26 +27,258 @@
   "rule_file_reads": 2,
   "spec_file_reads": 1
  },
- "1.1:2": {
-  "commands": 63,
+ "1.2:1": {
+  "commands": 36,
+  "components": {
+   "d": {
+    "check_runs": 10,
+    "failing_runs": 5,
+    "steps_passed": 3
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 3,
+  "spec_file_reads": 1
+ },
+ "1.2:2": {
+  "commands": 24,
+  "components": {
+   "d": {
+    "check_runs": 6,
+    "failing_runs": 3,
+    "steps_passed": 3
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 2,
+  "spec_file_reads": 1
+ },
+ "2.1:1": {
+  "commands": 56,
   "components": {
    "c": {
-    "check_runs": 16,
-    "failing_runs": 12,
-    "steps_passed": 4
+    "check_runs": 31,
+    "failing_runs": 21,
+    "steps_passed": 5
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 3,
+  "spec_file_reads": 1
+ },
+ "2.1:2": {
+  "commands": 78,
+  "components": {
+   "c": {
+    "check_runs": 39,
+    "failing_runs": 29,
+    "steps_passed": 5
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 2,
+  "spec_file_reads": 1
+ },
+ "1.1:1": {
+  "commands": 91,
+  "components": {
+   "c": {
+    "check_runs": 33,
+    "failing_runs": 24,
+    "steps_passed": 5
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 11,
+  "spec_file_reads": 1
+ },
+ "1.1:2": {
+  "commands": 78,
+  "components": {
+   "c": {
+    "check_runs": 56,
+    "failing_runs": 43,
+    "steps_passed": 5
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 7,
+  "spec_file_reads": 1
+ },
+ "2.3:1": {
+  "commands": 75,
+  "components": {
+   "e": {
+    "check_runs": 51,
+    "failing_runs": 29,
+    "steps_passed": 6
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 3,
+  "spec_file_reads": 3
+ },
+ "2.3:2": {
+  "commands": 133,
+  "components": {
+   "e": {
+    "check_runs": 89,
+    "failing_runs": 73,
+    "steps_passed": 6
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 5,
+  "spec_file_reads": 1
+ },
+ "1.3:1": {
+  "commands": 156,
+  "components": {
+   "e": {
+    "check_runs": 92,
+    "failing_runs": 56,
+    "steps_passed": 6
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 11,
+  "spec_file_reads": 3
+ },
+ "1.3:2": {
+  "commands": 151,
+  "components": {
+   "e": {
+    "check_runs": 67,
+    "failing_runs": 55,
+    "steps_passed": 6
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 28,
+  "spec_file_reads": 2
+ },
+ "3:1": {
+  "commands": 138,
+  "components": {
+   "c": {
+    "check_runs": 24,
+    "failing_runs": 19,
+    "steps_passed": 5
+   },
+   "d": {
+    "check_runs": 4,
+    "failing_runs": 1,
+    "steps_passed": 3
+   },
+   "e": {
+    "check_runs": 51,
+    "failing_runs": 42,
+    "steps_passed": 6
    }
   },
   "ab_first_clean_cmd": null,
   "ab_breaks_after_clean": [],
   "rule_file_reads": 6,
-  "spec_file_reads": 1
+  "spec_file_reads": 4
  },
  "3:2": {
-  "commands": 112,
+  "commands": 79,
+  "components": {
+   "c": {
+    "check_runs": 21,
+    "failing_runs": 11,
+    "steps_passed": 5
+   },
+   "d": {
+    "check_runs": 7,
+    "failing_runs": 1,
+    "steps_passed": 3
+   },
+   "e": {
+    "check_runs": 27,
+    "failing_runs": 15,
+    "steps_passed": 6
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 8,
+  "spec_file_reads": 14
+ },
+ "4:1": {
+  "commands": 153,
+  "components": {
+   "c": {
+    "check_runs": 28,
+    "failing_runs": 25,
+    "steps_passed": 3
+   },
+   "d": {
+    "check_runs": 6,
+    "failing_runs": 4,
+    "steps_passed": 2
+   },
+   "e": {
+    "check_runs": 35,
+    "failing_runs": 32,
+    "steps_passed": 2
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 6,
+  "spec_file_reads": 0
+ },
+ "4:2": {
+  "commands": 210,
   "components": {
    "c": {
     "check_runs": 29,
-    "failing_runs": 24,
+    "failing_runs": 25,
+    "steps_passed": 4
+   },
+   "d": {
+    "check_runs": 12,
+    "failing_runs": 9,
+    "steps_passed": 3
+   },
+   "e": {
+    "check_runs": 91,
+    "failing_runs": 87,
+    "steps_passed": 3
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 5,
+  "spec_file_reads": 0
+ },
+ "5.3:1": {
+  "commands": 208,
+  "components": {
+   "a": {
+    "check_runs": 30,
+    "failing_runs": 11,
+    "steps_passed": 4
+   },
+   "b": {
+    "check_runs": 35,
+    "failing_runs": 23,
+    "steps_passed": 5
+   },
+   "c": {
+    "check_runs": 24,
+    "failing_runs": 15,
     "steps_passed": 5
    },
    "d": {
@@ -350,74 +287,171 @@
     "steps_passed": 3
    },
    "e": {
-    "check_runs": 38,
-    "failing_runs": 32,
+    "check_runs": 65,
+    "failing_runs": 58,
     "steps_passed": 6
    }
   },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 9,
-  "spec_file_reads": 3
+  "ab_first_clean_cmd": 70,
+  "ab_breaks_after_clean": [
+   {
+    "cmd": 176,
+    "check": "a_3",
+    "during": "E.6",
+    "rules": [
+     "A3.10",
+     "A3.11",
+     "A3.8"
+    ]
+   },
+   {
+    "cmd": 179,
+    "check": "a_4",
+    "during": "E.6",
+    "rules": [
+     "A4.9"
+    ]
+   },
+   {
+    "cmd": 181,
+    "check": "b_2",
+    "during": "E.6",
+    "rules": [
+     "B2.11"
+    ]
+   }
+  ],
+  "rule_file_reads": 10,
+  "spec_file_reads": 2
  },
- "1.3:2": {
-  "commands": 110,
+ "5.3:2": {
+  "commands": 187,
   "components": {
+   "a": {
+    "check_runs": 10,
+    "failing_runs": 3,
+    "steps_passed": 4
+   },
+   "b": {
+    "check_runs": 27,
+    "failing_runs": 22,
+    "steps_passed": 5
+   },
+   "c": {
+    "check_runs": 27,
+    "failing_runs": 22,
+    "steps_passed": 5
+   },
+   "d": {
+    "check_runs": 3,
+    "failing_runs": 0,
+    "steps_passed": 3
+   },
    "e": {
-    "check_runs": 2,
-    "failing_runs": 2,
-    "steps_passed": 0
+    "check_runs": 47,
+    "failing_runs": 39,
+    "steps_passed": 6
    }
   },
-  "ab_first_clean_cmd": null,
+  "ab_first_clean_cmd": 185,
   "ab_breaks_after_clean": [],
-  "rule_file_reads": 8,
-  "spec_file_reads": 1
+  "rule_file_reads": 4,
+  "spec_file_reads": 5
  },
- "2.3:2": {
-  "commands": 87,
+ "5.2:1": {
+  "commands": 173,
   "components": {
+   "c": {
+    "check_runs": 42,
+    "failing_runs": 27,
+    "steps_passed": 5
+   },
+   "d": {
+    "check_runs": 9,
+    "failing_runs": 0,
+    "steps_passed": 3
+   },
    "e": {
-    "check_runs": 30,
-    "failing_runs": 21,
+    "check_runs": 52,
+    "failing_runs": 39,
+    "steps_passed": 6
+   }
+  },
+  "ab_first_clean_cmd": 167,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 14,
+  "spec_file_reads": 0
+ },
+ "5.2:2": {
+  "commands": 126,
+  "components": {
+   "c": {
+    "check_runs": 21,
+    "failing_runs": 11,
+    "steps_passed": 5
+   },
+   "d": {
+    "check_runs": 6,
+    "failing_runs": 0,
+    "steps_passed": 3
+   },
+   "e": {
+    "check_runs": 36,
+    "failing_runs": 23,
+    "steps_passed": 6
+   }
+  },
+  "ab_first_clean_cmd": 52,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 3,
+  "spec_file_reads": 7
+ },
+ "5.1:1": {
+  "commands": 153,
+  "components": {
+   "c": {
+    "check_runs": 28,
+    "failing_runs": 24,
+    "steps_passed": 4
+   },
+   "d": {
+    "check_runs": 3,
+    "failing_runs": 0,
+    "steps_passed": 3
+   },
+   "e": {
+    "check_runs": 32,
+    "failing_runs": 27,
     "steps_passed": 4
    }
   },
   "ab_first_clean_cmd": null,
   "ab_breaks_after_clean": [],
-  "rule_file_reads": 4,
+  "rule_file_reads": 8,
   "spec_file_reads": 0
  },
- "4:2": {
-  "commands": 202,
+ "5.1:2": {
+  "commands": 143,
   "components": {
    "c": {
-    "check_runs": 35,
-    "failing_runs": 30,
+    "check_runs": 29,
+    "failing_runs": 19,
     "steps_passed": 5
    },
    "d": {
-    "check_runs": 6,
-    "failing_runs": 4,
-    "steps_passed": 2
+    "check_runs": 7,
+    "failing_runs": 2,
+    "steps_passed": 3
    },
    "e": {
-    "check_runs": 19,
-    "failing_runs": 16,
-    "steps_passed": 3
+    "check_runs": 52,
+    "failing_runs": 47,
+    "steps_passed": 5
    }
   },
   "ab_first_clean_cmd": null,
   "ab_breaks_after_clean": [],
-  "rule_file_reads": 7,
-  "spec_file_reads": 0
- },
- "5.1:2": {
-  "commands": 72,
-  "components": {},
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 4,
+  "rule_file_reads": 6,
   "spec_file_reads": 0
  }
 }

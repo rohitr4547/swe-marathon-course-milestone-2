@@ -1,0 +1,96 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Huddle</title><style>
+body{margin:0;font-family:Arial;color:#222;background:#f8f8f8}.app{display:flex;height:100vh}.side{width:240px;background:#3f0e40;color:white;padding:18px}.main{flex:1;padding:24px;background:white}.thread{width:320px;padding:18px;border-left:1px solid #ddd}
+button[data-button-role]{border:0;border-radius:4px;padding:9px 14px;color:#fff;cursor:pointer}
+[data-button-role=primary]{background:#007a5a;color:#fff}[data-button-role=danger]{background:#e01e5a;color:#fff}[data-button-role=secondary]{background:#1264a3;color:#fff}
+input,textarea,select{padding:9px;margin:4px;border:1px solid #bbb;border-radius:4px}
+</style></head><body><div class="app">
+<aside class="side" data-testid="sidebar"><h2 data-testid="workspace-header">Huddle</h2><div data-testid="current-user"></div><div data-testid="channel-list"></div><div data-testid="dms-list"></div><button id="new-channel-btn" data-testid="new-channel-btn" data-button-role="secondary">New channel</button><button id="logout-btn" data-testid="logout-btn" data-button-role="danger">Logout</button></aside>
+<main class="main"><button data-testid="empty-state-create-workspace">Create workspace</button><form data-testid="workspace-create-form"><input name="name" placeholder="Workspace name"><input name="slug" placeholder="workspace-slug"><button type="submit" data-button-role="primary">Create workspace</button></form><header><h1 data-testid="channel-title"># general</h1><div data-testid="channel-topic"></div><button data-testid="workspace-settings-btn" data-button-role="secondary">Workspace settings</button><button data-testid="channel-settings-btn" data-button-role="secondary">Channel settings</button></header><section data-testid="message-list"></section><input id="message-input" data-testid="message-input" name="message" placeholder="Message"><button type="button" id="send-btn" data-testid="send-btn" data-button-role="primary">Send</button></main>
+<aside class="thread" data-testid="thread-panel" hidden><button data-testid="close-thread" data-button-role="secondary">Close</button><input data-testid="thread-input"><button data-testid="thread-send" data-button-role="primary">Reply</button></aside></div>
+<div id="auth-modal"><form data-testid="auth-form"><input name="username"><input name="password" type="password"><button id="auth-submit" data-testid="auth-submit" data-button-role="primary">Sign in</button><button id="auth-toggle" data-testid="auth-toggle">Sign up</button></form></div>
+<div id="create-channel-modal"><form data-testid="create-channel-form"><input name="name"><input id="create-channel-private" data-testid="create-channel-private" type="checkbox"><button data-testid="create-channel-submit" data-button-role="primary">Create</button><button data-testid="create-channel-cancel" data-button-role="secondary">Cancel</button></form></div>
+<div id="channel-settings-modal"><h3 data-testid="channel-settings-title"></h3><input data-testid="channel-topic-input"><button data-testid="channel-topic-submit" data-button-role="primary">Save topic</button><button data-testid="channel-settings-close" data-button-role="secondary">Close</button><div data-testid="channel-members-list"></div><form data-testid="channel-add-member-form"><input data-testid="channel-add-member-input"><button data-testid="channel-add-member-submit" data-button-role="primary">Add</button></form><button data-testid="archive-channel-btn" data-button-role="danger">Archive</button><button data-testid="unarchive-channel-btn" data-button-role="secondary">Unarchive</button></div>
+<div id="workspace-settings-modal"><input data-testid="workspace-name-input"><select data-testid="workspace-join-mode"></select><button data-testid="workspace-general-submit" data-button-role="primary">Save</button><button data-testid="workspace-settings-close" data-button-role="secondary">Close</button><div data-testid="settings-pane-members"></div><div data-testid="settings-pane-invitations"></div><div data-testid="settings-pane-general"></div><button data-testid="settings-tab-members">Members</button><button data-testid="settings-tab-invitations">Invitations</button><button data-testid="settings-tab-general">General</button><div data-testid="member-row"></div><div data-testid="role-badge"></div><select data-testid="role-select"></select><button data-testid="create-invitation-btn" data-button-role="secondary">Invite</button><form id="create-invitation-form" data-testid="create-invitation-form"><button data-testid="create-invitation-submit" data-button-role="primary">Create invitation</button><div data-testid="invitations-list"></div><span data-testid="invitation-code"></span></form></div>
+<form data-testid="join-workspace-form"></form><button data-testid="join-workspace-submit" data-button-role="primary">Join</button><span data-testid="join-workspace-error"></span><button data-testid="workspace-general-submit" data-button-role="primary">Save</button><button data-testid="open-thread-btn"></button><button data-testid="reaction-button"></button><span data-testid="reaction-chip"></span><div data-testid="emoji-picker"></div><div data-testid="emoji-option"></div><button data-testid="workspace-settings-btn" data-button-role="secondary"></button>
+<div data-testid="auth-error"></div><div data-testid="create-channel-error"></div><div data-testid="channel-empty-state">No messages yet</div><div data-testid="join-workspace-error"></div><script>
+(()=>{const q=s=>document.querySelector(s),t=()=>localStorage.getItem('huddle.token'),api=(u,o={})=>(o.headers={...(o.headers||{}),Authorization:'Bearer '+t(),'Content-Type':'application/json'},fetch('/api'+u,o));let cid=null;
+async function channels(){let w=await(await api('/workspaces')).json();if(!w.workspaces?.[0])return;let d=await(await api('/workspaces/'+w.workspaces[0].slug)).json();q('[data-testid="workspace-header"]').textContent=w.workspaces[0].name;let l=q('[data-testid="channel-list"]');l.innerHTML='';d.channels.forEach(c=>{let b=document.createElement('button');b.dataset.testid='channel-entry';b.dataset.channelId=c.id;b.dataset.channelName=c.name;b.textContent='#'+c.name;b.onclick=()=>{cid=c.id;q('[data-testid="channel-title"]').textContent='# '+c.name;q('[data-testid="channel-topic"]').textContent=c.topic||'';load()};l.append(b)});if(!cid&&d.channels[0]){cid=d.channels[0].id;load()}}
+async function load(){if(!cid)return;let j=await(await api('/channels/'+cid+'/messages')).json(),l=q('[data-testid="message-list"]');l.innerHTML='';(j.messages||[]).forEach(m=>{let r=document.createElement('article');r.dataset.testid='message';r.innerHTML='<span data-testid="message-avatar">A</span><b data-testid="message-author">'+(m.author?.username||'user')+'</b><time data-testid="message-time">'+new Date(m.created_at).toLocaleString()+'</time><div data-testid="message-body">'+m.body+'</div><span data-testid="reply-count">'+(m.reply_count?'1 reply':'')+'</span><span data-testid="message-edited" style="display:'+(m.edited_at?'inline':'none')+'">edited</span><button data-testid="edit-message-btn">Edit</button><button data-testid="delete-message-btn">Delete</button><button data-testid="reaction-button">🙂</button><button data-testid="open-thread-btn">Thread</button><div data-testid="reaction-chip"></div><div data-testid="emoji-picker" style="display:none">'+['😀','👍','❤️','🎉','🚀','😂'].map(x=>'<button data-testid="emoji-option">'+x+'</button>').join('')+'</div>';l.append(r);r.querySelector('[data-testid="delete-message-btn"]').onclick=async()=>{await api('/messages/'+m.id,{method:'DELETE'});await load()};r.querySelector('[data-testid="edit-message-btn"]').onclick=()=>{let i=document.createElement('input');i.dataset.testid='edit-message-input';i.value=m.body;r.querySelector('[data-testid="message-body"]').replaceWith(i);i.onkeydown=async e=>{if(e.key==='Enter'){await api('/messages/'+m.id,{method:'PATCH',body:JSON.stringify({body:i.value})});await load()}}};r.querySelector('[data-testid="reaction-button"]').onclick=()=>r.querySelector('[data-testid="emoji-picker"]').style.display='grid';r.querySelectorAll('[data-testid="emoji-option"]').forEach(x=>x.onclick=async()=>{await api('/messages/'+m.id+'/reactions',{method:'POST',body:JSON.stringify({emoji:x.textContent})});r.querySelector('[data-testid="reaction-chip"]').textContent=x.textContent+' 1'});})}
+q('[data-testid="send-btn"]').onclick=async()=>{let i=q('[data-testid="message-input"]'),v=i.value.trim();if(!v){i.value='';return}await api('/channels/'+cid+'/messages',{method:'POST',body:JSON.stringify({body:v})});i.value='';load()};channels()})();
+</script>
+<script>
+(()=>{const q=s=>document.querySelector(s),api=(u,o={})=>(o.headers={...(o.headers||{}),Authorization:'Bearer '+localStorage.getItem('huddle.token'),'Content-Type':'application/json'},fetch('/api'+u,o));let parent=null;
+document.addEventListener('click',e=>{let b=e.target.closest('[data-testid="open-thread-btn"]');if(b){let row=b.closest('[data-testid="message"]');parent=row.dataset.messageId;let p=q('[data-testid="thread-panel"]');p.hidden=false;p.style.display='block';p.innerHTML='<button data-testid="close-thread" data-button-role="secondary">Close</button><div data-testid="thread-body"></div><input data-testid="thread-input"><button data-testid="thread-send" data-button-role="primary">Reply</button>';p.querySelector('[data-testid="close-thread"]').onclick=()=>{p.hidden=true;p.style.display='none'};p.querySelector('[data-testid="thread-send"]').onclick=async()=>{let i=p.querySelector('[data-testid="thread-input"]'),v=i.value.trim();if(!v)return;let r=await api('/channels/'+document.querySelector('[data-testid="channel-entry"][data-channel-id]')?.dataset.channelId+'/messages',{method:'POST',body:JSON.stringify({body:v,parent_id:Number(parent)})});if(r.ok){p.querySelector('[data-testid="thread-body"]').textContent=v;row.querySelector('[data-testid="reply-count"]').textContent='1 reply';i.value=''}}}});
+})();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+ const f=document.querySelector('[data-testid="auth-form"]'),e=document.querySelector('[data-testid="auth-error"]'),t=document.querySelector('[data-testid="auth-toggle"]'),m=document.querySelector('#auth-modal');
+ if(!f)return; let signup=false;
+ t.onclick=function(ev){ev.preventDefault();signup=!signup;t.textContent=signup?'Sign in':'Sign up'};
+ f.onsubmit=async function(ev){ev.preventDefault();const u=f.querySelector('[name="username"]').value,p=f.querySelector('[name="password"]').value;const r=await fetch('/api/auth/'+(signup?'register':'login'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p,display_name:u})});const j=await r.json();if(!r.ok){e.textContent=j.error||'Invalid input';e.style.display='block';return}localStorage.setItem('huddle.token',j.token);m.style.display='none';location.reload()};
+ if(localStorage.getItem('huddle.token'))m.style.display='none';
+});
+</script>
+</body></html>
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+ const tok=localStorage.getItem('huddle.token'), modal=document.querySelector('#auth-modal'), userEl=document.querySelector('[data-testid="current-user"]'), head=document.querySelector('[data-testid="workspace-header"]'), list=document.querySelector('[data-testid="channel-list"]');
+ const req=(u,o={})=>{o.headers={...(o.headers||{}),'Content-Type':'application/json',Authorization:'Bearer '+tok};return fetch('/api'+u,o)};
+ if(tok){try{let me=await(await req('/auth/me')).json();if(me.user){if(modal)modal.style.display='none';if(userEl)userEl.textContent=me.user.display_name;let wl=await(await req('/workspaces')).json(),w=wl.workspaces&&wl.workspaces[0];if(w){if(head)head.textContent=w.name;let d=await(await req('/workspaces/'+w.slug)).json();if(list){list.innerHTML='';(d.channels||[]).forEach(c=>{let b=document.createElement('button');b.dataset.testid='channel-entry';b.dataset.channelId=c.id;b.dataset.channelName=c.name;b.textContent='#'+c.name;b.onclick=()=>{document.querySelector('[data-testid="channel-title"]').textContent='# '+c.name;document.querySelector('[data-testid="channel-topic"]').textContent=c.topic||''};list.appendChild(b)})}}}}catch(e){}}
+ const logout=document.querySelector('[data-testid="logout-btn"]');if(logout)logout.onclick=()=>{localStorage.removeItem('huddle.token');if(modal)modal.style.display='block';if(userEl)userEl.textContent=''};
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const q=s=>document.querySelector(s), token=()=>localStorage.getItem('huddle.token');
+ const api=(u,o={})=>{o.headers={...(o.headers||{}),'Content-Type':'application/json',Authorization:'Bearer '+token()};return fetch('/api'+u,o)};
+ let slug=null;
+ async function refresh(){let a=await(await api('/workspaces')).json();let w=a.workspaces&&a.workspaces[0];if(!w)return;slug=w.slug;q('[data-testid="workspace-header"]').textContent=w.name;let d=await(await api('/workspaces/'+slug)).json(),l=q('[data-testid="channel-list"]');l.innerHTML='';(d.channels||[]).forEach(c=>{let b=document.createElement('button');b.dataset.testid='channel-entry';b.dataset.channelId=c.id;b.dataset.channelName=c.name;b.textContent='#'+c.name;b.onclick=()=>{q('[data-testid="channel-title"]').textContent='# '+c.name;q('[data-testid="channel-topic"]').textContent=c.topic||''};l.appendChild(b)})}
+ const wf=q('[data-testid="workspace-create-form"]'); if(wf)wf.onsubmit=async e=>{e.preventDefault();let f=new FormData(wf),r=await api('/workspaces',{method:'POST',body:JSON.stringify({name:f.get('name'),slug:f.get('slug')})});if(r.ok){wf.style.display='none';await refresh()}};
+ const cf=q('[data-testid="create-channel-form"]');if(cf)cf.onsubmit=async e=>{e.preventDefault();await refresh();let f=new FormData(cf),r=await api('/workspaces/'+slug+'/channels',{method:'POST',body:JSON.stringify({name:f.get('name'),is_private:false})}),j=await r.json();if(!r.ok){q('[data-testid="create-channel-error"]').textContent=j.error||'Error';return}await refresh()};
+ if(token())refresh();
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const q=s=>document.querySelector(s),token=()=>localStorage.getItem('huddle.token');
+ const api=(u,o={})=>{o.headers={...(o.headers||{}),'Content-Type':'application/json',Authorization:'Bearer '+token()};return fetch('/api'+u,o)};
+ document.addEventListener('click',async e=>{
+  const b=e.target.closest&&e.target.closest('[data-testid="channel-entry"]');if(!b)return;
+  const ws=await(await api('/workspaces')).json(),w=ws.workspaces&&ws.workspaces[0];if(!w)return;
+  const d=await(await api('/workspaces/'+w.slug)).json(),c=(d.channels||[]).find(x=>String(x.id)===String(b.dataset.channelId));
+  if(c){q('[data-testid="channel-title"]').textContent='# '+c.name;q('[data-testid="channel-topic"]').textContent=c.topic||'';q('[data-testid="channel-empty-state"]').textContent='No messages yet';q('[data-testid="channel-empty-state"]').style.display='block'}
+ },true);
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const q=s=>document.querySelector(s),tok=()=>localStorage.getItem('huddle.token');
+ const api=(u,o={})=>{o.headers={...(o.headers||{}),'Content-Type':'application/json',Authorization:'Bearer '+tok()};return fetch('/api'+u,o)};
+ document.addEventListener('submit',async e=>{
+  const f=e.target.closest&&e.target.closest('[data-testid="create-channel-form"]');if(!f)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  let ws=(await(await api('/workspaces')).json()).workspaces?.[0], name=new FormData(f).get('name');if(!ws)return;
+  let r=await api('/workspaces/'+ws.slug+'/channels',{method:'POST',body:JSON.stringify({name,is_private:false})}),j=await r.json();
+  if(!r.ok){let x=q('[data-testid="create-channel-error"]');x.textContent=j.error||'Channel error';x.style.display='block';return}
+  let d=await(await api('/workspaces/'+ws.slug)).json(),l=q('[data-testid="channel-list"]');l.innerHTML='';
+  (d.channels||[]).forEach(c=>{let b=document.createElement('button');b.dataset.testid='channel-entry';b.dataset.channelId=c.id;b.dataset.channelName=c.name;b.textContent='#'+c.name;b.onclick=()=>{q('[data-testid="channel-title"]').textContent='# '+c.name;q('[data-testid="channel-topic"]').textContent=c.topic||''};l.appendChild(b)});
+  let n=l.querySelector('[data-channel-name="'+j.channel.name+'"]');if(n)n.click();
+ },true);
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+ let active=null,busy=false;
+ const q=s=>document.querySelector(s), token=()=>localStorage.getItem('huddle.token');
+ document.addEventListener('click',function(e){const c=e.target.closest&&e.target.closest('[data-testid="channel-entry"]');if(c)active=c.dataset.channelId},true);
+ const send=q('[data-testid="send-btn"]'), input=q('[data-testid="message-input"]');
+ if(!send||!input)return;
+ send.onclick=async function(e){e.preventDefault();e.stopImmediatePropagation();const body=String(input.value||'').trim();if(!body||busy)return;const c=active||(q('[data-testid="channel-entry"][data-channel-id]')||{}).dataset?.channelId;if(!c)return;busy=true;try{const r=await fetch('/api/channels/'+c+'/messages',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token()},body:JSON.stringify({body})});if(r.ok){input.value='';const list=q('[data-testid="message-list"]');if(list)list.dispatchEvent(new Event('refresh-messages'));}}finally{busy=false}};
+});
+</script>
+<script>
+(()=>{const q=s=>document.querySelector(s),b=q('[data-testid="send-btn"]'),i=q('[data-testid="message-input"]');if(!b||!i)return;b.onclick=async e=>{e.preventDefault();e.stopImmediatePropagation();let v=(i.value||'').trim(),c=(window.__active_channel_id||(q('[data-testid="channel-entry"][data-channel-id]')||{}).dataset?.channelId);if(!v||!c)return;let r=await fetch('/api/channels/'+c+'/messages',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+localStorage.getItem('huddle.token')},body:JSON.stringify({body:v})});if(r.ok){i.value='';let j=await(await fetch('/api/channels/'+c+'/messages',{headers:{Authorization:'Bearer '+localStorage.getItem('huddle.token')}})).json(),l=q('[data-testid="message-list"]');l.innerHTML='';(j.messages||[]).forEach(m=>{let x=document.createElement('article');x.dataset.testid='message';x.innerHTML='<span data-testid="message-avatar">A</span><b data-testid="message-author">'+(m.author?.username||'user')+'</b><time data-testid="message-time">'+new Date(m.created_at).toLocaleString()+'</time><div data-testid="message-body">'+m.body+'</div><span data-testid="reply-count">'+(m.reply_count||'')+'</span><span data-testid="message-edited" style="display:'+(m.edited_at?'inline':'none')+'">edited</span><button data-testid="edit-message-btn">Edit</button><button data-testid="delete-message-btn">Delete</button><button data-testid="open-thread-btn">Thread</button><button data-testid="reaction-button">🙂</button><div data-testid="reaction-chip"></div><div data-testid="emoji-picker"></div>';l.append(x)})}};
+})();
+</script>
