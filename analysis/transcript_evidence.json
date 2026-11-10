@@ -1,6 +1,6 @@
 {
  "1.1:1": {
-  "commands": 91,
+  "commands": 88,
   "components": {
    "c": {
     "check_runs": 33,
@@ -10,49 +10,49 @@
   },
   "ab_first_clean_cmd": null,
   "ab_breaks_after_clean": [],
-  "rule_file_reads": 11,
+  "rule_file_reads": 4,
   "spec_file_reads": 1
  },
  "1.1:2": {
-  "commands": 78,
+  "commands": 85,
   "components": {
    "c": {
-    "check_runs": 56,
-    "failing_runs": 43,
+    "check_runs": 37,
+    "failing_runs": 24,
     "steps_passed": 5
    }
   },
   "ab_first_clean_cmd": null,
   "ab_breaks_after_clean": [],
-  "rule_file_reads": 7,
-  "spec_file_reads": 1
+  "rule_file_reads": 14,
+  "spec_file_reads": 6
  },
  "1.2:1": {
-  "commands": 36,
+  "commands": 17,
   "components": {
    "d": {
-    "check_runs": 10,
-    "failing_runs": 5,
-    "steps_passed": 3
-   }
-  },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 3,
-  "spec_file_reads": 1
- },
- "1.2:2": {
-  "commands": 24,
-  "components": {
-   "d": {
-    "check_runs": 6,
-    "failing_runs": 3,
+    "check_runs": 4,
+    "failing_runs": 1,
     "steps_passed": 3
    }
   },
   "ab_first_clean_cmd": null,
   "ab_breaks_after_clean": [],
   "rule_file_reads": 2,
+  "spec_file_reads": 1
+ },
+ "1.2:2": {
+  "commands": 23,
+  "components": {
+   "d": {
+    "check_runs": 10,
+    "failing_runs": 1,
+    "steps_passed": 3
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 1,
   "spec_file_reads": 1
  },
  "1.3:1": {
@@ -84,7 +84,7 @@
   "spec_file_reads": 1
  },
  "2.1:1": {
-  "commands": 56,
+  "commands": 50,
   "components": {
    "c": {
     "check_runs": 31,
@@ -94,49 +94,49 @@
   },
   "ab_first_clean_cmd": null,
   "ab_breaks_after_clean": [],
-  "rule_file_reads": 3,
+  "rule_file_reads": 4,
   "spec_file_reads": 1
  },
  "2.1:2": {
-  "commands": 78,
+  "commands": 55,
   "components": {
    "c": {
-    "check_runs": 39,
-    "failing_runs": 29,
+    "check_runs": 28,
+    "failing_runs": 19,
     "steps_passed": 5
    }
   },
   "ab_first_clean_cmd": null,
   "ab_breaks_after_clean": [],
-  "rule_file_reads": 2,
+  "rule_file_reads": 3,
   "spec_file_reads": 1
  },
  "2.2:1": {
-  "commands": 11,
+  "commands": 35,
   "components": {
    "d": {
-    "check_runs": 4,
-    "failing_runs": 1,
+    "check_runs": 8,
+    "failing_runs": 5,
+    "steps_passed": 3
+   }
+  },
+  "ab_first_clean_cmd": null,
+  "ab_breaks_after_clean": [],
+  "rule_file_reads": 1,
+  "spec_file_reads": 1
+ },
+ "2.2:2": {
+  "commands": 17,
+  "components": {
+   "d": {
+    "check_runs": 5,
+    "failing_runs": 2,
     "steps_passed": 3
    }
   },
   "ab_first_clean_cmd": null,
   "ab_breaks_after_clean": [],
   "rule_file_reads": 0,
-  "spec_file_reads": 1
- },
- "2.2:2": {
-  "commands": 34,
-  "components": {
-   "d": {
-    "check_runs": 9,
-    "failing_runs": 6,
-    "steps_passed": 3
-   }
-  },
-  "ab_first_clean_cmd": null,
-  "ab_breaks_after_clean": [],
-  "rule_file_reads": 2,
   "spec_file_reads": 1
  },
  "2.3:1": {

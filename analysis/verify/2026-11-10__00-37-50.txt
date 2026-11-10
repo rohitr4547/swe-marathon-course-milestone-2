@@ -1,0 +1,5 @@
+IRC gateway up: 6667 listens
+  check_d_1.sh: RESULT: 8 passed, 0 failed
+  check_d_2.sh: RESULT: 3 passed, 0 failed
+  check_d_3.sh: RESULT: 3 passed, 0 failed
+D: 14 passed, 0 failed

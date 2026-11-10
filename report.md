@@ -36,16 +36,16 @@ in brackets. "Submitted with failures?" uses the last result the agent itself sa
 
 | Run | Component | Repeat | Job folder | Check results | Cost | Ran checks (times) | Submitted with failures? | Problems |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1.1 | C | 1 | `jobs/2026-11-08__12-29-13` | C: 34 passed, 0 failed | $0.18 | 34 | No | Copied the checks to `/tmp`, switched the copy to `verbose` and got per-rule output twice |
-| 1.1 | C | 2 | `jobs/2026-11-08__12-46-35` | C: 34 passed, 0 failed | $0.14 | 57 | No | Tried five times to get `verbose` output, without success |
-| 1.2 | D | 1 | `jobs/2026-11-08__11-41-26` | D: 14 passed, 0 failed | $0.05 | 10 | No | None |
-| 1.2 | D | 2 | `jobs/2026-11-08__11-57-09` | D: 14 passed, 0 failed | $0.03 | 6 | No | None |
+| 1.1 | C | 1 | `jobs/2026-11-10__00-06-03` | C: 34 passed, 0 failed | $0.14 | 34 | No | Ran the rule file directly with `--verbose` to get per-rule output (11 times) |
+| 1.1 | C | 2 | `jobs/2026-11-10__00-23-28` | C: 34 passed, 0 failed | $0.14 | 38 | No | Copied `lib.sh` to `/tmp`, switched the copy to `verbose` and got per-rule output (10 times) |
+| 1.2 | D | 1 | `jobs/2026-11-10__00-37-50` | D: 14 passed, 0 failed | $0.02 | 4 | No | None |
+| 1.2 | D | 2 | `jobs/2026-11-10__00-45-11` | D: 14 passed, 0 failed | $0.03 | 10 | No | None |
 | 1.3 | E | 1 | `jobs/2026-11-09__23-06-24` | E: 37 passed, 0 failed | $0.16 | 50 | No | Tried twice to get `verbose` output by overriding `FEEDBACK`, without success |
 | 1.3 | E | 2 | `jobs/2026-11-09__23-27-46` | E: 37 passed, 0 failed | $0.30 | 93 | No | Tried four times to get `verbose` output by overriding `FEEDBACK`, without success |
-| 2.1 | C | 1 | `jobs/2026-11-08__12-04-30` | C: 34 passed, 0 failed | $0.09 | 35 | No | None |
-| 2.1 | C | 2 | `jobs/2026-11-08__12-15-52` | C: 0 passed, 34 failed | $0.14 | 40 | No | Passed every check in its own container, but on a fresh database every registration fails (the handler reports any database error as `409 duplicate`) |
-| 2.2 | D | 1 | `jobs/2026-11-08__11-26-42` | D: 14 passed, 0 failed | $0.01 | 4 | No | None |
-| 2.2 | D | 2 | `jobs/2026-11-08__11-33-04` | D: 14 passed, 0 failed | $0.05 | 9 | No | None |
+| 2.1 | C | 1 | `jobs/2026-11-10__00-53-33` | C: 34 passed, 0 failed | $0.08 | 31 | No | None |
+| 2.1 | C | 2 | `jobs/2026-11-10__01-04-10` | C: 34 passed, 0 failed | $0.09 | 30 | No | None |
+| 2.2 | D | 1 | `jobs/2026-11-10__01-15-32` | D: 14 passed, 0 failed | $0.04 | 9 | No | None |
+| 2.2 | D | 2 | `jobs/2026-11-10__01-24-53` | D: 14 passed, 0 failed | $0.02 | 5 | No | None |
 | 2.3 | E | 1 | `jobs/2026-11-09__22-14-23` | E: 35 passed, 2 failed | $0.44 | 135 | Yes (E.5) | Spent most of its run on the E.5 UI step and submitted with it failing |
 | 2.3 | E | 2 | `jobs/2026-11-09__22-49-02` | E: 37 passed, 0 failed | $0.13 | 65 | No | None |
 | 3 | C, D, E | 1 | `jobs/2026-11-09__05-23-47` | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.26 | 95 | No | Breaks A and B (62 regression rules), which it was not asked to keep |
@@ -61,10 +61,9 @@ in brackets. "Submitted with failures?" uses the last result the agent itself sa
 
 No run crashed or hit the cost limit, and no agent wrote to `/spec`.
 
-Runs 3, 4 and 5.x (and both Run 5.3 repeats) use the final spec, in which the UI lives in a single
-`static/app.js` and `start.sh` must start every service. Runs 1.1, 1.2, 2.1 and 2.2 use the
-previous revision, whose C and D text is the same; for E it differs only in how the
-UI code is organised. "Ran checks" is given only where transcript counts were recomputed.
+All 22 runs use the same frozen spec: Spec C, D and E and their checks, and the shared files in
+`common/`, are identical wherever they appear. The UI lives in a single `static/app.js`, and
+`start.sh` must start every service.
 
 Both Run 5.3 apps pass all 185 rules of A to E with the regression suite at `0 broken`, and both pass
 all ten groups of a separate probe of COMPONENTS.md requirements (`analysis/probe_components.py`,
@@ -86,14 +85,14 @@ So any difference within a pair comes from the feedback mode, plus run-to-run no
 
 | Component | Repeat | Run | Mode | Check results | Cost | Model calls | Agent minutes | Check runs (failing) | Reads of the rule code | Per-rule output obtained despite `score_only` |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| C | 1 | 1.1 | score_only | C: 34 passed, 0 failed | $0.18 | 92 | 11.5 | 33 (24) | 11 | 2 times |
-| C | 1 | 2.1 | verbose | C: 34 passed, 0 failed | $0.09 | 56 | 6.2 | 31 (21) | 3 | n/a |
-| C | 2 | 1.1 | score_only | C: 34 passed, 0 failed | $0.14 | 79 | 8.5 | 56 (43) | 7 | 0 (5 attempts) |
-| C | 2 | 2.1 | verbose | C: 0 passed, 34 failed | $0.14 | 79 | 7.6 | 39 (29) | 2 | n/a |
-| D | 1 | 1.2 | score_only | D: 14 passed, 0 failed | $0.05 | 37 | 2.6 | 10 (5) | 3 | 0 |
-| D | 1 | 2.2 | verbose | D: 14 passed, 0 failed | $0.01 | 11 | 1.0 | 4 (1) | 0 | n/a |
-| D | 2 | 1.2 | score_only | D: 14 passed, 0 failed | $0.03 | 24 | 1.9 | 6 (3) | 2 | 0 |
-| D | 2 | 2.2 | verbose | D: 14 passed, 0 failed | $0.05 | 35 | 2.5 | 9 (6) | 2 | n/a |
+| C | 1 | 1.1 | score_only | C: 34 passed, 0 failed | $0.14 | 89 | 7.0 | 33 (24) | 4 | 11 times |
+| C | 1 | 2.1 | verbose | C: 34 passed, 0 failed | $0.08 | 50 | 5.0 | 31 (21) | 4 | n/a |
+| C | 2 | 1.1 | score_only | C: 34 passed, 0 failed | $0.14 | 86 | 7.9 | 37 (24) | 14 | 10 times |
+| C | 2 | 2.1 | verbose | C: 34 passed, 0 failed | $0.09 | 55 | 5.3 | 28 (19) | 3 | n/a |
+| D | 1 | 1.2 | score_only | D: 14 passed, 0 failed | $0.02 | 18 | 1.3 | 4 (1) | 2 | 0 |
+| D | 1 | 2.2 | verbose | D: 14 passed, 0 failed | $0.04 | 36 | 3.2 | 8 (5) | 1 | n/a |
+| D | 2 | 1.2 | score_only | D: 14 passed, 0 failed | $0.03 | 24 | 2.2 | 10 (1) | 1 | 0 |
+| D | 2 | 2.2 | verbose | D: 14 passed, 0 failed | $0.02 | 17 | 1.3 | 5 (2) | 0 | n/a |
 | E | 1 | 1.3 | score_only | E: 37 passed, 0 failed | $0.16 | 97 | 15.0 | 48 (30) | 10 | 0 (2 attempts) |
 | E | 1 | 2.3 | verbose | E: 35 passed, 2 failed | $0.44 | 175 | 28.2 | 121 (91) | 7 | n/a |
 | E | 2 | 1.3 | score_only | E: 37 passed, 0 failed | $0.30 | 159 | 24.5 | 86 (61) | 10 | 0 (4 attempts) |
@@ -103,45 +102,49 @@ So any difference within a pair comes from the feedback mode, plus run-to-run no
 
 Yes, mainly by saving the agent work. The clearest evidence is what the agents did when the detail
 was withheld: they went out of their way to get it back.
-- In four of the six `score_only` runs, the agent tried to obtain per-rule output.
-- In one (C repeat 1), it succeeded twice, by copying the check files to `/tmp`, editing the copied
-  `lib.sh` to `FEEDBACK=verbose` and running the copy. Both E agents tried to override `FEEDBACK`
-  (two and four times); the checks read the mode from their own `lib.sh`, so this had no effect.
-- The `score_only` agents also read the rule code more often in five of six pairs (11 against 3, 7
-  against 2, 3 against 0, 10 against 7, 10 against 3; one pair tied at 2).
+- Four of the six `score_only` agents tried to obtain per-rule output: both C agents and both E
+  agents. The D agents needed only a few check runs and did not try.
+- Both C agents succeeded, about ten times each: repeat 1 by running the rule file directly with
+  `--verbose`, repeat 2 by copying `lib.sh` to `/tmp` and switching the copy to `verbose`.
+- Both E agents tried overriding `FEEDBACK` (two and four times). The checks read the mode from
+  their own `lib.sh`, so this had no effect.
+- The `score_only` agents read the rule code more often in five of six pairs (14 against 3, 2
+  against 1, 1 against 0, 10 against 7, 10 against 3; one pair tied at 4).
 
 An agent that did not need the failure details would not try to rebuild them by hand.
 
-With `verbose` output the run was cheaper in three of the six pairs, tied in one and dearer in two.
-The largest gap is on E repeat 2, where each failure names a missing UI element: 24.5 agent minutes
-and $0.30 with `score_only` against 10.5 minutes and $0.13 with `verbose`. E repeat 1 goes the other way: the `verbose` agent
+With `verbose` output the run was cheaper in four of the six pairs. Both C pairs were cheaper and
+faster with `verbose` ($0.08 against $0.14 and $0.09 against $0.14). The largest gap is on E repeat
+2, where each failure names a missing UI element: 24.5 agent minutes and $0.30 with `score_only`
+against 10.5 minutes and $0.13 with `verbose`. E repeat 1 goes the other way: the `verbose` agent
 spent 121 check runs on the E.5 UI step and submitted with two E rules failing.
 
-In the final results the mode made little difference: every `score_only` app and four of the six
-`verbose` apps pass all of their checks. The two exceptions are 2.1 repeat 2, a defect that only
-appears on a fresh database (see "Other evidence"), and 2.3 repeat 1, which submitted with E.5
-failing. Detailed output therefore helps by saving the agent work, not by deciding whether a
-component gets built.
+In the final results the mode made little difference: all six `score_only` apps and five of the six
+`verbose` apps pass all of their checks. Detailed output therefore helps by saving the agent work,
+not by deciding whether a component gets built.
 
 #### Consistency across repeats
 
-All runs used the same model access and settings, so the repeats are directly comparable. The extra
-reading of the rule code under `score_only` holds in both repeats for C and E. Costs vary: the D
-comparison reverses between repeats ($0.05 against $0.01, then $0.03 against $0.05), and E favours
-`verbose` in repeat 2 but not in repeat 1. D runs are short (1 to 3 minutes), so their differences are
-within noise. The direction of the effect (more effort to recover detail without `verbose`) is
-consistent; its size is not.
+All 22 runs used the same spec, model access and settings, so the repeats are directly comparable.
+- C is consistent: in both repeats the `score_only` agent recovered per-rule output about ten times
+  and cost more than the `verbose` agent.
+- The extra reading of the rule code under `score_only` holds in both E repeats.
+- D runs are short (1 to 3 minutes) and need few check runs; their differences reverse between
+  repeats and are within noise.
+- E favours `verbose` in repeat 2 but not in repeat 1.
+
+The direction of the effect (more effort to recover detail without `verbose`) is consistent; its
+size is not.
 
 #### Other evidence
 
-- The workaround shows a limit of my `score_only` setup. The checks must ship in `/spec` as runnable
-  code, so a determined agent can always copy them and change the mode. The spec reads the mode from
-  the check's own `lib.sh`, which stops a plain `FEEDBACK=verbose` override, but not an edited copy.
-  A truly blind setting would need the checks to run outside the agent's reach.
-- In 2.1 repeat 2, every check passed in the agent's own container and `ready.sh` printed
-  `READY TO SUBMIT`. On a fresh database, though, every registration fails, because the handler turns
-  any database error into `409 duplicate`. The agent's container had a database built up step by
-  step, which hid the defect. This is why I verify from an empty database: the grader does the same.
+- The workaround shows a limit of a `score_only` setup. The checks must ship in `/spec` as runnable
+  code, so a determined agent can always run the rule file directly or copy the checks and change
+  the mode. The spec reads the mode from the check's own `lib.sh`, which stops a plain
+  `FEEDBACK=verbose` override, but not an edited copy. A truly blind setting would need the checks
+  to run outside the agent's reach.
+- The `score_only` E agents, unable to get per-rule output, read the rule code instead (10 reads
+  each) and still reached a fully passing app, at higher cost in repeat 2.
 
 ### 2) Tests as the spec
 
@@ -210,21 +213,20 @@ of them; only the number of components built in one run changes.
 
 | Component | Alone (2.x), repeats 1 / 2 | Together C to E (3), repeats 1 / 2 | Whole app A to E: 5.1, 5.2, 5.3 (repeat 1 / repeat 2) |
 | --- | --- | --- | --- |
-| C passed (of 34) | 34 / 0 | 34 / 34 | 34 / 34, 34 / 1, 34 / 34 |
+| C passed (of 34) | 34 / 34 | 34 / 34 | 34 / 34, 34 / 1, 34 / 34 |
 | D passed (of 14) | 14 / 14 | 14 / 14 | 14 / 14, 14 / 13, 14 / 14 |
 | E passed (of 37) | 35 / 37 | 37 / 37 | 35 / 37, 37 / 3, 37 / 37 |
 
 | Repeat | Alone: 2.1 + 2.2 + 2.3 | Together: Run 3 |
 | --- | --- | --- |
-| 1 | $0.55 | $0.26 |
-| 2 | $0.32 | $0.22 |
+| 1 | $0.57 | $0.26 |
+| 2 | $0.24 | $0.22 |
 
 #### Answer
 
 Not when building C, D and E together. Run 3 passed every C, D and E rule in both repeats, the same
-as building each component alone, and at lower cost in both repeats. The two shortfalls in the
-"alone" column, C in 2.1 repeat 2 (the fresh-database defect described in question 1) and E in 2.3
-repeat 1 (two E.5 rules), are not scale effects: building more at once did no worse.
+as building each component alone, and at lower cost in both repeats. The one shortfall in the
+"alone" column, E in 2.3 repeat 1 (two E.5 rules), shows that building more at once did no worse.
 
 At the whole-app scale the results depend on the run. Both Run 5.3 apps and 5.2 repeat 1 pass every
 C, D and E rule, and 5.1 repeat 2 passes all of them too. Two runs fell short: 5.1 repeat 1 left two
