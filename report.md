@@ -40,30 +40,31 @@ in brackets. "Submitted with failures?" uses the last result the agent itself sa
 | 1.1 | C | 2 | `jobs/2026-11-08__12-46-35` | C: 34 passed, 0 failed | $0.14 | 57 | No | Tried five times to get `verbose` output, without success |
 | 1.2 | D | 1 | `jobs/2026-11-08__11-41-26` | D: 14 passed, 0 failed | $0.05 | 10 | No | None |
 | 1.2 | D | 2 | `jobs/2026-11-08__11-57-09` | D: 14 passed, 0 failed | $0.03 | 6 | No | None |
-| 1.3 | E | 1 | `jobs/2026-11-08__13-45-40` | E: 37 passed, 0 failed | $0.35 | 93 | No | Ran a `verbose` copy of the E checks 17 times |
+| 1.3 | E | 1 | `jobs/2026-11-09__23-06-24` | E: 37 passed, 0 failed | $0.16 | 50 | No | Tried twice to get `verbose` output by overriding `FEEDBACK`, without success |
 | 1.3 | E | 2 | `jobs/2026-11-08__14-16-02` | E: 37 passed, 0 failed | $0.29 | 68 | No | Ran a `verbose` copy of the E checks 17 times; never ran `ready.sh` |
 | 2.1 | C | 1 | `jobs/2026-11-08__12-04-30` | C: 34 passed, 0 failed | $0.09 | 35 | No | None |
 | 2.1 | C | 2 | `jobs/2026-11-08__12-15-52` | C: 0 passed, 34 failed | $0.14 | 40 | No | Passed every check in its own container, but on a fresh database every registration fails (the handler reports any database error as `409 duplicate`) |
 | 2.2 | D | 1 | `jobs/2026-11-08__11-26-42` | D: 14 passed, 0 failed | $0.01 | 4 | No | None |
 | 2.2 | D | 2 | `jobs/2026-11-08__11-33-04` | D: 14 passed, 0 failed | $0.05 | 9 | No | None |
-| 2.3 | E | 1 | `jobs/2026-11-08__13-00-56` | E: 37 passed, 0 failed | $0.13 | 52 | No | None |
-| 2.3 | E | 2 | `jobs/2026-11-08__13-19-18` | E: 37 passed, 0 failed | $0.27 | 94 | No | Submitted while `ready.sh` listed four checks not rerun since its last edit |
-| 3 | C, D, E | 1 | `jobs/2026-11-09__05-23-47` | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.26 | — | No | Breaks A and B (62 regression rules), which it was not asked to keep |
-| 3 | C, D, E | 2 | `jobs/2026-11-09__08-25-57` | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.22 | — | No | Breaks A and B (60 regression rules) |
-| 4 | C, D, E | 1 | `jobs/2026-11-09__08-45-19` | C: 4 passed, 30 failed; D: 14 passed, 0 failed; E: 19 passed, 18 failed | $0.32 | — | Yes | Cluster does not restart cleanly, so most later checks find no cluster |
-| 4 | C, D, E | 2 | `jobs/2026-11-09__09-08-41` | C: 34 passed, 0 failed; D: 11 passed, 3 failed; E: 27 passed, 10 failed | $0.81 | — | Yes | Spent most of its run on E without converging |
-| 5.1 | A to E | 1 | `jobs/2026-11-09__04-35-03` | A and B: 44 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 35 passed, 2 failed | $0.27 | — | Yes | Never brought the regression suite to `0 broken` |
-| 5.1 | A to E | 2 | `jobs/2026-11-09__05-01-25` | A and B: 34 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.29 | — | Yes | Never brought the regression suite to `0 broken` |
-| 5.2 | A to E | 1 | `jobs/2026-11-09__03-47-59` | A and B: 0 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.39 | — | No | None |
-| 5.2 | A to E | 2 | `jobs/2026-11-09__04-14-20` | A and B: 10 broken; C: 1 passed, 33 failed; D: 13 passed, 1 failed; E: 3 passed, 34 failed | $0.12 | — | Yes | Submitted early, before C and E worked |
-| 5.3 | A to E | 1 | `jobs/2026-11-09__02-48-31` | A: 48 passed, 0 failed; B: 52 passed, 0 failed; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.37 | — | No | None |
-| 5.3 | A to E | 2 | `jobs/2026-11-09__03-13-53` | A: 48 passed, 0 failed; B: 52 passed, 0 failed; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.42 | — | No | None |
+| 2.3 | E | 1 | `jobs/2026-11-09__22-14-23` | E: 35 passed, 2 failed | $0.44 | 135 | Yes (E.5) | Spent most of its run on the E.5 UI step and submitted with it failing |
+| 2.3 | E | 2 | `jobs/2026-11-09__22-49-02` | E: 37 passed, 0 failed | $0.13 | 65 | No | None |
+| 3 | C, D, E | 1 | `jobs/2026-11-09__05-23-47` | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.26 | 95 | No | Breaks A and B (62 regression rules), which it was not asked to keep |
+| 3 | C, D, E | 2 | `jobs/2026-11-09__08-25-57` | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.22 | 93 | No | Breaks A and B (60 regression rules) |
+| 4 | C, D, E | 1 | `jobs/2026-11-09__08-45-19` | C: 4 passed, 30 failed; D: 14 passed, 0 failed; E: 19 passed, 18 failed | $0.32 | 112 | Yes (C.2, C.4, C.5, D.1 to D.3, E.1 to E.3, E.5, E.6) | Cluster does not restart cleanly, so most later checks find no cluster |
+| 4 | C, D, E | 2 | `jobs/2026-11-09__09-08-41` | C: 34 passed, 0 failed; D: 11 passed, 3 failed; E: 27 passed, 10 failed | $0.81 | 282 | Yes (D.1, D.2, E.5) | Spent most of its run on E without converging |
+| 5.1 | A to E | 1 | `jobs/2026-11-09__04-35-03` | A and B: 44 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 35 passed, 2 failed | $0.27 | 70 (5) | Yes (regression, E.6) | Never brought the regression suite to `0 broken` |
+| 5.1 | A to E | 2 | `jobs/2026-11-09__05-01-25` | A and B: 34 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.29 | 69 (22) | Yes (regression, C.1) | Never brought the regression suite to `0 broken` |
+| 5.2 | A to E | 1 | `jobs/2026-11-09__03-47-59` | A and B: 0 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.39 | 95 (34) | No | None |
+| 5.2 | A to E | 2 | `jobs/2026-11-09__04-14-20` | A and B: 10 broken; C: 1 passed, 33 failed; D: 13 passed, 1 failed; E: 3 passed, 34 failed | $0.12 | 13 (13) | Yes (regression) | Submitted early, before C and E worked |
+| 5.3 | A to E | 1 | `jobs/2026-11-09__02-48-31` | A: 48 passed, 0 failed; B: 52 passed, 0 failed; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.37 | 94 | No | None |
+| 5.3 | A to E | 2 | `jobs/2026-11-09__03-13-53` | A: 48 passed, 0 failed; B: 52 passed, 0 failed; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.42 | 103 | No | None |
 
 No run crashed or hit the cost limit, and no agent wrote to `/spec`.
 
 Runs 3, 4 and 5.x (and both Run 5.3 repeats) use the final spec, in which the UI lives in a single
-`static/app.js` and `start.sh` must start every service. Runs 1.x and 2.x use the previous
-revision, whose C and D text is the same; for E it differs only in how the UI code is organised. "Ran checks" is given only where transcript counts were recomputed.
+`static/app.js` and `start.sh` must start every service. Runs 1.1, 1.2, 2.1, 2.2 and 1.3
+repeat 2 use the previous revision, whose C and D text is the same; for E it differs only in how the
+UI code is organised. "Ran checks" is given only where transcript counts were recomputed.
 
 Both Run 5.3 apps pass all 185 rules of A to E with the regression suite at `0 broken`, and both pass
 all ten groups of a separate probe of COMPONENTS.md requirements (`analysis/probe_components.py`,
@@ -93,40 +94,42 @@ So any difference within a pair comes from the feedback mode, plus run-to-run no
 | D | 1 | 2.2 | verbose | D: 14 passed, 0 failed | $0.01 | 11 | 1.0 | 4 (1) | 0 | n/a |
 | D | 2 | 1.2 | score_only | D: 14 passed, 0 failed | $0.03 | 24 | 1.9 | 6 (3) | 2 | 0 |
 | D | 2 | 2.2 | verbose | D: 14 passed, 0 failed | $0.05 | 35 | 2.5 | 9 (6) | 2 | n/a |
-| E | 1 | 1.3 | score_only | E: 37 passed, 0 failed | $0.35 | 157 | 24.8 | 92 (56) | 11 | 17 times |
-| E | 1 | 2.3 | verbose | E: 37 passed, 0 failed | $0.13 | 76 | 13.4 | 51 (29) | 3 | n/a |
+| E | 1 | 1.3 | score_only | E: 37 passed, 0 failed | $0.16 | 97 | 15.0 | 48 (30) | 10 | 0 (2 attempts) |
+| E | 1 | 2.3 | verbose | E: 35 passed, 2 failed | $0.44 | 175 | 28.2 | 121 (91) | 7 | n/a |
 | E | 2 | 1.3 | score_only | E: 37 passed, 0 failed | $0.29 | 151 | 30.2 | 67 (55) | 28 | 17 times |
-| E | 2 | 2.3 | verbose | E: 37 passed, 0 failed | $0.27 | 134 | 20.9 | 89 (73) | 5 | n/a |
+| E | 2 | 2.3 | verbose | E: 37 passed, 0 failed | $0.13 | 76 | 10.5 | 57 (37) | 3 | n/a |
 
 #### Answer
 
-Yes. The clearest evidence is what the agents did when the detail was withheld: they went out of
-their way to get it back.
+Yes, mainly by saving the agent work. The clearest evidence is what the agents did when the detail
+was withheld: they went out of their way to get it back.
 - In four of the six `score_only` runs, the agent tried to obtain per-rule output.
-- In three, it succeeded, by copying the check files to `/tmp`, editing the copied `lib.sh` to
-  `FEEDBACK=verbose` and running the copy. Both E runs did this 17 times each.
+- In two, it succeeded, by copying the check files to `/tmp`, editing the copied `lib.sh` to
+  `FEEDBACK=verbose` and running the copy (17 times in E repeat 2).
 - The `score_only` agents also read the rule code more often in five of six pairs (11 against 3, 7
-  against 2, 3 against 0, 11 against 3, 28 against 5; one pair tied at 2).
+  against 2, 3 against 0, 10 against 7, 28 against 3; one pair tied at 2).
 
-An agent that did not need the failure details would not rebuild them by hand.
+An agent that did not need the failure details would not try to rebuild them by hand.
 
-Recovering the detail costs effort. With `verbose` output the run was cheaper in four of the six
-pairs (one tied, one was dearer). The largest gaps were on E, where each failure names a missing UI element: the `score_only`
-runs took 24.8 and 30.2 agent minutes against 13.4 and 20.9.
+With `verbose` output the run was cheaper in four of the six pairs. The largest gap is on E repeat 2,
+where each failure names a missing UI element: 30.2 agent minutes and $0.29 with `score_only`
+against 10.5 minutes and $0.13 with `verbose`. E repeat 1 goes the other way: the `verbose` agent
+spent 121 check runs on the E.5 UI step and submitted with two E rules failing.
 
-In the final results the mode made no difference: every `score_only` app and five of the six
-`verbose` apps pass all of their checks. The one exception, 2.1 repeat 2, is a defect that only
-appears on a fresh database (see "Other evidence"), not a feedback effect. Detailed output therefore
-helps by saving the agent work, not by deciding whether a component gets built.
+In the final results the mode made little difference: every `score_only` app and four of the six
+`verbose` apps pass all of their checks. The two exceptions are 2.1 repeat 2, a defect that only
+appears on a fresh database (see "Other evidence"), and 2.3 repeat 1, which submitted with E.5
+failing. Detailed output therefore helps by saving the agent work, not by deciding whether a
+component gets built.
 
 #### Consistency across repeats
 
-All 22 runs used the same model access and settings, so the repeats are directly comparable. Some
-findings hold in both repeats: the `score_only` E runs worked around the mode 17 times each, read the
-rule code more, and took longer than the `verbose` E runs. Others vary: the D comparison reverses
-between repeats ($0.05 against $0.01, then $0.03 against $0.05), and the C costs tie in repeat 2. D
-runs are short (1 to 3 minutes), so their differences are within noise. The E result is the
-consistent one.
+All runs used the same model access and settings, so the repeats are directly comparable. The extra
+reading of the rule code under `score_only` holds in both repeats for C and E. Costs vary: the D
+comparison reverses between repeats ($0.05 against $0.01, then $0.03 against $0.05), and E favours
+`verbose` in repeat 2 but not in repeat 1. D runs are short (1 to 3 minutes), so their differences are
+within noise. The direction of the effect (more effort to recover detail without `verbose`) is
+consistent; its size is not.
 
 #### Other evidence
 
@@ -208,18 +211,19 @@ of them; only the number of components built in one run changes.
 | --- | --- | --- | --- |
 | C passed (of 34) | 34 / 0 | 34 / 34 | 34 / 34, 34 / 1, 34 / 34 |
 | D passed (of 14) | 14 / 14 | 14 / 14 | 14 / 14, 14 / 13, 14 / 14 |
-| E passed (of 37) | 37 / 37 | 37 / 37 | 35 / 37, 37 / 3, 37 / 37 |
+| E passed (of 37) | 35 / 37 | 37 / 37 | 35 / 37, 37 / 3, 37 / 37 |
 
 | Repeat | Alone: 2.1 + 2.2 + 2.3 | Together: Run 3 |
 | --- | --- | --- |
-| 1 | $0.24 | $0.26 |
-| 2 | $0.46 | $0.22 |
+| 1 | $0.55 | $0.26 |
+| 2 | $0.32 | $0.22 |
 
 #### Answer
 
 Not when building C, D and E together. Run 3 passed every C, D and E rule in both repeats, the same
-as building each component alone, and at similar or lower cost. The single exception in the "alone"
-column, C in 2.1 repeat 2, is the fresh-database defect described in question 1, not a scale effect.
+as building each component alone, and at lower cost in both repeats. The two shortfalls in the
+"alone" column, C in 2.1 repeat 2 (the fresh-database defect described in question 1) and E in 2.3
+repeat 1 (two E.5 rules), are not scale effects: building more at once did no worse.
 
 At the whole-app scale the results depend on the run. Both Run 5.3 apps and 5.2 repeat 1 pass every
 C, D and E rule, and 5.1 repeat 2 passes all of them too. Two runs fell short: 5.1 repeat 1 left two

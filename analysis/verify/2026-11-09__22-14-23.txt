@@ -1,0 +1,10 @@
+IRC gateway up: 6667 listens
+  check_e_1.sh: RESULT: 9 passed, 0 failed
+  check_e_2.sh: RESULT: 5 passed, 0 failed
+  check_e_3.sh: RESULT: 4 passed, 0 failed
+  check_e_4.sh: RESULT: 5 passed, 0 failed
+  check_e_5.sh: RESULT: 5 passed, 2 failed
+      FAIL E5.4 new-channel-btn and create-channel-form create a channel and open it; a duplicate name shows create-channel-error: timed out waiting for locator("[data-testid=\...
+      FAIL E5.5 switching channels updates channel-title and channel-topic; an empty channel shows non-blank channel-empty-state: no visible non-blank channel-empty-state
+  check_e_6.sh: RESULT: 7 passed, 0 failed
+E: 35 passed, 2 failed
