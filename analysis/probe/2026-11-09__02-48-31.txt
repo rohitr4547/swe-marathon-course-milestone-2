@@ -1,0 +1,12 @@
+IRC gateway up: 6667 listens
+PASS timestamps are RFC 3339 UTC
+PASS ids stable across nodes
+PASS reactions shape read from another node
+PASS slash edge cases (//literal, bare /shrug, bare /me, unknown, /topic response)
+PASS file attach rules and download headers
+PASS group response shape, permissions, idempotent delete
+PASS profile persists across nodes; validation; unknown user
+PASS delete by workspace owner; not by other members; idempotent
+PASS IRC: PING, unknown command, #slug-name, accepted commands, web->IRC line
+PASS UI: token key, sidebar attributes, # names, header, human time, workspace name
+PROBES: 10 passed, 0 failed

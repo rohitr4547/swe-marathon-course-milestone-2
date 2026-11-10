@@ -1,0 +1,2 @@
+IRC gateway up: 6667 listens
+REGRESSION: 0 broken

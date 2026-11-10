@@ -1,0 +1,17 @@
+cluster NOT up after 20s. Last lines of /tmp/start.log:
+Traceback (most recent call last):
+  File "/spec/checks/regression_rules.py", line 890, in <module>
+    run(A_GROUPS + B_GROUPS, sys.argv[1:], "bash /spec/checks/regression.sh [A0 ... B5]",
+  File "/spec/checks/../common/checklib.py", line 666, in run
+    subprocess.run(["bash", RESTART], capture_output=True, timeout=22)
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['bash', '/spec/common/restart.sh']' timed out after 22 seconds

@@ -11,7 +11,7 @@ NAME="m2verify$$"
 docker run -d --name "$NAME" -v "$SPEC":/spec:ro m2-checktest >/dev/null
 trap 'docker rm -f "$NAME" >/dev/null 2>&1' EXIT
 docker cp "$APP/." "$NAME":/app/
-docker exec "$NAME" bash -c 'rm -rf /app/data; pip install -q -r /app/requirements.txt >/dev/null 2>&1; bash /spec/common/restart.sh | tail -1'
+docker exec "$NAME" bash -c 'rm -rf /app/data; pip install -q -r /app/requirements.txt >/dev/null 2>&1 || { echo "PIP INSTALL FAILED: results invalid"; exit 1; }; bash /spec/common/restart.sh | tail -1' || exit 1
 for x in $(echo "$COMPS" | grep -o .); do
   tp=0; tf=0
   for chk in $(docker exec "$NAME" bash -c "ls /spec/$x/checks/check_${x}_*.sh 2>/dev/null | sort -V"); do

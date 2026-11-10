@@ -1,0 +1,113 @@
+IRC gateway up: 6667 listens
+  check_a_1.sh: RESULT: 16 passed, 1 failed
+      FAIL A0.7 Component A routes return 401 with no token and with a bogus token: expected 401 for GET /api/workspaces/nope/members none->200; GET /api/workspaces/nope/member...
+  check_a_2.sh: RESULT: 0 passed, 9 failed
+      FAIL A2.1 POST /api/workspaces returns 201 {workspace, general_channel}; join_mode open; caller is owner: general_channel was {'id': 1, 'workspace_id': 1, 'name': 'genera...
+      NOTE A2: setup: workspace creation failed (A2.1)
+  check_a_3.sh: RESULT: 0 passed, 11 failed
+      FAIL A3.1 the owner promotes members to admin: 200 {member: {user_id, role}}: expected 200, got 405 405: Method Not Allowed
+      FAIL A3.2 an admin can move a non-admin between member and guest: expected 200, got 405 405: Method Not Allowed
+      FAIL A3.3 an admin changing another admin or the owner gets 403: expected 403, got 405 405: Method Not Allowed
+      FAIL A3.4 role 'owner', an unknown role, or a missing role returns 400: expected 400, got 405 405: Method Not Allowed
+      FAIL A3.5 the owner cannot change their own role via PATCH (403): expected 403, got 405 405: Method Not Allowed
+      FAIL A3.6 a member or guest changing roles gets 403: expected 403, got 405 405: Method Not Allowed
+      FAIL A3.7 PATCH for a user who is not in the workspace returns 404: expected 404, got 405 405: Method Not Allowed
+      FAIL A3.8 a guest cannot join a public channel or create a channel (403): expected 403, got 200 {"channel": {"id": 3, "workspace_id": 2, "name": "pub85433382d3b2", "is_pr...
+      FAIL A3.9 a member creates public channels but not private ones (403); an admin creates private ones: expected 403, got 201 {"channel": {"id": 5, "workspace_id": 2, "name...
+      FAIL A3.10 transfer_ownership: an admin caller gets 403; a non-admin target gets 400: expected 403, got 405 405: Method Not Allowed
+      FAIL A3.11 transfer to an admin: 200; target becomes owner (owner_id too), previous owner becomes admin: expected 200, got 405 405: Method Not Allowed
+  check_a_4.sh: RESULT: 0 passed, 11 failed
+      NOTE A4: setup: could not make an admin (A3.1)
+A: 16 passed, 32 failed
+  check_b_1.sh: RESULT: 8 passed, 10 failed
+      FAIL B0.7 Component B routes return 401 with no token and with a bogus token: expected 401 for POST /api/channels/999999999/leave none->405; POST /api/channels/999999999/...
+      FAIL B0.8 unknown channel or message ids return 404 with a valid token: expected 404 for GET /api/channels/999999999/members->200; GET /api/messages/999999999/replies->20...
+      FAIL B1.2 topic of 250 chars is accepted at create; 251 chars returns 400: expected 400, got 201 {"channel": {"id": 10, "workspace_id": 4, "name": "t854338435b36", "is_pr...
+      FAIL B1.4 GET /api/workspaces/{slug}: 200 {workspace, channels, read_state}; hides others' private channels: #general or the public channel is missing
+      FAIL B1.5 archived channels are omitted unless ?include_archived=1 or ?include_archived=true: expected 200, got 405 405: Method Not Allowed
+      FAIL B1.6 PATCH topic: channel member or workspace owner 200 {channel}; other member 403; 251 chars 400: expected 403, got 200 {"channel": {"id": 13, "workspace_id": 4, "...
+      FAIL B1.7 GET /api/channels/{id}/members: 200 {members: [UserObj]} including everyone who joined: members were []
+      FAIL B1.8 leave returns 200 {channel}, again 200 (idempotent), and removes the member: expected 200, got 405 405: Method Not Allowed
+      FAIL B1.9 a user who joins the workspace through another channel is also added to #general: new workspace member (or the owner) is not in #general
+      FAIL B1.10 archive/unarchive are owner-only; writes to an archived channel return 423 until unarchived: expected 403, got 405 405: Method Not Allowed
+  check_b_2.sh: RESULT: 2 passed, 9 failed
+      FAIL B2.3 workspace members may post in public channels; outsiders and private non-members get 403: expected 403, got 201 {"message": {"id": 3, "channel_id": 15, "author_...
+      FAIL B2.4 GET messages pages newest-first with next_cursor; null on the last page: page 1 was ['p5', 'p4', 'p3', 'p2', 'p1'], next_cursor None
+      FAIL B2.5 a cursor issued by 8000 gives the same page on 8001 and 8002: no cursor from B2.4
+      FAIL B2.6 a cursor still resumes from the same place after new messages arrive: no cursor from B2.4
+      FAIL B2.7 limit defaults to 50 when omitted: got 52 messages
+      FAIL B2.8 limit 0, 201, -1 or 'abc' returns 400; limit 200 is accepted: expected 400, got 200 {"messages": [{"id": 8, "channel_id": 16, "author_id": 27, "author": {"id": ...
+      FAIL B2.9 a malformed or made-up cursor returns 400: expected 400, got 200 {"messages": [{"id": 8, "channel_id": 16, "author_id": 27, "author": {"id": 27, "username"...
+      FAIL B2.10 offset pagination is rejected: ?offset= or ?page= returns 400: expected 400, got 200 {"messages": [{"id": 8, "channel_id": 16, "author_id": 27, "author": {"id":...
+      FAIL B2.11 replies: oldest-first and paged; parent reply_count counts them; replies stay out of the channel list: replies page 1 was ['r0', 'r1', 'r2']
+  check_b_3.sh: RESULT: 0 passed, 7 failed
+      FAIL B3.1 POST /api/messages/{id}/pin: 200 {pin: {message_id, pinned_by, pinned_at}}; repeat is idempotent: expected 200, got 405 405: Method Not Allowed
+      FAIL B3.2 GET pins: newest-first [{message, pinned_by, pinned_at}], paged with next_cursor; bad cursor 400: expected 200, got 405 405: Method Not Allowed
+      FAIL B3.3 DELETE /api/messages/{id}/pin: 200 {unpinned: true}; the pin leaves the list: expected 200, got 405 405: Method Not Allowed
+      FAIL B3.4 non-members of a private channel get 403 on its pin list: expected 403, got 200 <!doctype html><html><head><meta charset="utf-8"><title>Huddle</title><style> *{...
+      FAIL B3.5 search: 200 {results, next_cursor} newest-first, case-insensitive, accessible channels only: member got []
+      FAIL B3.6 search workspace_id=<id> limits results to that workspace: got []
+      FAIL B3.7 search pages with limit/cursor; limit=0 or a missing q returns 400: limit=1 should give one result and a cursor
+  check_b_4.sh: RESULT: 4 passed, 3 failed
+      FAIL B4.4 every Spec B write kind is broadcast once, in order, each advancing event_id by exactly 1: POST /api/channels/23/leave got 405 405: Method Not Allowed
+      FAIL B4.5 no-op writes (join when joined, leave when left) emit no event: got message.created#6, message.created#7
+      FAIL B4.6 resume on another node replays events after since_event_id in order, sends 'resumed', then streams live: replayed nothing, expected event_ids 1..14
+  check_b_5.sh: RESULT: 2 passed, 7 failed
+      FAIL B5.3 '@channel' expands to every channel member except the author, deduped with explicit mentions: @channel did not give bob and carol
+      FAIL B5.4 GET read: 200 {read_state: {channel_id, last_read_event_id 0, unread_count 3, mention_count 1}}: channel_id was None
+      FAIL B5.5 POST read moves the cursor forward and recounts; an older event_id never moves it back: expected 200, got 405 405: Method Not Allowed
+      FAIL B5.6 the reader's own messages, even self-mentions, add no unread or mention counts: read_state was {}
+      FAIL B5.7 GET /api/workspaces/{slug} read_state is a list holding the same object for each channel: read_state is dict, expected a list
+      FAIL B5.8 POST read with a non-integer returns 400; private-channel non-members get 403: expected 400, got 405 405: Method Not Allowed
+      FAIL B5.9 wrong JSON types or a malformed JSON body on Spec B routes return 400, never 500: expected 400 for POST workspaces/ws8543944506bd/ch {'name': 'ty854395602648', ...
+B: 16 passed, 36 failed
+  check_c_1.sh: RESULT: 2 passed, 7 failed
+      FAIL C0.1 Component C routes return 401 with no token and with a bogus token: expected 401 for DELETE /api/messages/999999999/reactions/x none->405; DELETE /api/messages/...
+      FAIL C0.2 unknown message, file, user or workspace ids return 404 with a valid token: expected 404 for POST /api/messages/999999999/reactions->200; GET /api/files/9999999...
+      FAIL C1.3 a unicode emoji works in POST and as the URL-encoded {emoji} in DELETE; emojis keep first-added order: expected 200, got 405 405: Method Not Allowed
+      FAIL C1.4 DELETE removes only the caller's reaction; an emoji with no users left is dropped: expected 200, got 405 405: Method Not Allowed
+      FAIL C1.5 message objects in GET /api/channels/{id}/messages carry the same reactions list: listed reactions were [[{'emoji': 'eyes', 'count': 1, 'user_ids': [42]}, {'emo...
+      FAIL C1.6 reaction.added / reaction.removed events: one each, consecutive event_ids; repeats emit nothing: got message.created#2
+      FAIL C1.7 empty, non-string or missing emoji returns 400; a non-member of a private channel gets 403: expected 403, got 200 {"reactions": [{"emoji": "x", "count": 1, "use...
+  check_c_2.sh: RESULT: 0 passed, 8 failed
+      FAIL C2.1 POST /api/dms returns 200 {channel_id}; the same id both directions and on repeat: expected 200, got 405 405: Method Not Allowed
+      FAIL C2.2 both people can post and read in the DM; anyone else gets 403: no DM from C2.1
+      FAIL C2.3 POST /api/dms with an unknown user returns 404; a missing or non-integer user_id returns 400: expected 404, got 405 405: Method Not Allowed
+      FAIL C2.4 POST /api/files (multipart 'file') returns 201 {file: {id, uploader_id, filename, content_type, size, created_at}}: expected 201, got 405 405: Method Not Allowe...
+      FAIL C2.5 GET /api/files/{id} returns 200 {file} on every node: no file from C2.4
+      FAIL C2.6 GET /api/files/{id}/download returns the exact bytes, the Content-Type, and the filename in Content-Disposition: no file from C2.4
+      FAIL C2.7 an upload over 10 MiB returns 413: expected 413, got 405 405: Method Not Allowed
+      FAIL C2.8 file_ids on a post attach the caller's own unattached files; reuse, someone else's or unknown ids return 400: setup: upload failed
+  check_c_3.sh: RESULT: 0 passed, 6 failed
+      FAIL C3.1 '/me <text>' posts a normal message whose body stays '/me <text>'; '/me' with no text returns 400: expected 400, got 201 {"message": {"id": 157, "channel_id": 3...
+      FAIL C3.2 '/shrug <text>' posts '<text> ¯\_(ツ)_/¯'; '/shrug' alone posts just the emoticon: body was '/shrug ok then'
+      FAIL C3.3 '//text' posts a literal message whose body is '/text'; an unknown command returns 400: body was '//etc/hosts is a file'
+      FAIL C3.4 '/topic <text>' returns 201 {message: null, channel} with the new topic: response was {"message": {"id": 160, "channel_id": 34, "author_id": 47, "author": {"id"...
+      FAIL C3.5 '/invite @user' returns 201 {message: null, invited_user} and adds them to the channel: response was {"message": {"id": 161, "channel_id": 34, "author_id": 47, ...
+      FAIL C3.6 '/archive' and '/unarchive' by the workspace owner return 201 {message: null, channel}; others get 403: expected 403, got 201 {"message": {"id": 162, "channel_i...
+  check_c_4.sh: RESULT: 0 passed, 7 failed
+      FAIL C4.1 any member creates a group: 201 {group: {id, handle, name, member_user_ids}}; GET lists it: expected 201, got 405 405: Method Not Allowed
+      FAIL C4.2 duplicate handle 409; bad handle, missing handle or a non-member in user_ids 400; outsiders 403: expected 409, got 405 405: Method Not Allowed
+      FAIL C4.3 PATCH by the creator or workspace owner 200 {group}; other members 403; unknown handle 404: expected 200, got 405 405: Method Not Allowed
+      FAIL C4.4 @group-handle mentions group members in the channel, minus the author and anyone not in the channel: mentions were []; expected only cat (ben is not in the chan...
+      FAIL C4.5 @here mentions non-author channel members with an open WebSocket on any node, and stops after it closes: with cat connected: []
+      FAIL C4.6 ids from @user, @group, @here and @channel are deduped; the author is never included: mentions were ['50']; expected ann and owner once each, never cat
+      FAIL C4.7 DELETE by others 403; by the creator 200 {deleted: true}, again 200; the group is gone: expected 403, got 405 405: Method Not Allowed
+  check_c_5.sh: RESULT: 0 passed, 4 failed
+      FAIL C5.1 GET /api/users/{id} returns 200 {user} with every UserObj field: user missing ['id', 'username', 'display_name', 'timezone', 'avatar_url', 'status_text', 'statu...
+      FAIL C5.2 PATCH /api/users/me saves any subset of profile fields and returns 200 {user}; other nodes see it: expected 200, got 405 405: Method Not Allowed
+      FAIL C5.3 an unknown timezone, an out-of-range length or a wrong type returns 400 and saves nothing: {'timezone': 'Mars/Olympus_Mons'} -> got 405 405: Method Not Allowed
+      FAIL C5.4 a profile update reaches every connected client as {type: user.updated, user} with no channel_id or event_id: ted (no shared channel, on 8002) got no user.updat...
+C: 2 passed, 32 failed
+  check_d_1.sh: RESULT: 7 passed, 1 failed
+      FAIL D1.3 a client whose node died reconnects to 8000, resumes, and gets every missed event, then 'resumed': replayed [], end {'type': 'resumed', 'channel_id': 38, 'head_...
+  check_d_2.sh: RESULT: 3 passed, 0 failed
+  check_d_3.sh: RESULT: 3 passed, 0 failed
+D: 13 passed, 1 failed
+  check_e_1.sh: RESULT: 9 passed, 0 failed
+  check_e_2.sh: RESULT: 5 passed, 0 failed
+  check_e_3.sh: RESULT: 4 passed, 0 failed
+  check_e_4.sh: RESULT: 5 passed, 0 failed
+  check_e_5.sh: RESULT: 7 passed, 0 failed
+  check_e_6.sh: RESULT: 7 passed, 0 failed
+E: 37 passed, 0 failed

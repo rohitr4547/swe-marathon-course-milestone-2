@@ -1,0 +1,36 @@
+IRC gateway up: 6667 listens
+REGRESSION FAIL roles A0.7 Component A routes return 401 with no token and with a bogus token: expected 401 for PATCH /api/workspaces/nope none->405; PATCH /api/workspaces/nope bogus->405...
+REGRESSION FAIL roles A4.1 the owner creates an invitation: 201 {invitation} with a code and max_uses 1: expected 201, got 404 404: Not Found
+REGRESSION FAIL roles A4.2 a plain member cannot create, list or revoke invitations (403): expected 403, got 404 404: Not Found
+REGRESSION FAIL roles A4.3 owners and admins list active invitations: 200 {invitations}; admins can create them: expected 200, got 404 404: Not Found
+REGRESSION FAIL roles A4.4 accepting adds the user as 'member'; a used-up code then returns 404 and is not listed: expected 200, got 404 404: Not Found
+REGRESSION FAIL roles A4.5 max_uses 2 lets exactly two users in; the third gets 404: expected 201, got 404 404: Not Found
+REGRESSION FAIL roles A4.6 targeted invites are single-use; another user gets 403, the target gets 200: expected 201, got 404 404: Not Found
+REGRESSION FAIL roles A4.7 an expired invitation (expires_in_seconds 1) returns 404 and is not listed: expected 201, got 404 404: Not Found
+REGRESSION FAIL roles A4.8 DELETE revokes: 200 {deleted: true}; revoked and unknown codes return 404 on accept: expected 200, got 404 404: Not Found
+REGRESSION FAIL roles A4.9 PATCH /api/workspaces/{slug}: owner/admin 200 {workspace}; bad join_mode 400; member 403: expected 200, got 405 405: Method Not Allowed
+REGRESSION FAIL roles A4.10 invite_only: a non-member gets 403 joining a public channel, and 200 after accepting an invite: expected 403, got 200 {"channel": {"id": 9, "workspace_id": 3, "...
+REGRESSION FAIL roles A4.11 wrong JSON types or a malformed JSON body on Spec A routes return 400, never 500: expected 400 for POST workspaces/ws46225138aff4/invi {'max_uses': 'two'}->404;...
+REGRESSION FAIL channels B0.7 Component B routes return 401 with no token and with a bogus token: expected 401 for GET /api/search?q=x none->404; GET /api/search?q=x bogus->404; GET /api/cha...
+REGRESSION FAIL channels B1.4 GET /api/workspaces/{slug}: 200 {workspace, channels, read_state}; hides others' private channels: a private channel is shown to a non-member
+REGRESSION FAIL channels B1.5 archived channels are omitted unless ?include_archived=1 or ?include_archived=true: archived channel missing with include_archived=1
+REGRESSION FAIL channels B1.10 archive/unarchive are owner-only; writes to an archived channel return 423 until unarchived: expected 423, got 200 {"channel": {"id": 15, "workspace_id": 4, "na...
+REGRESSION FAIL channels B2.4 GET messages pages newest-first with next_cursor; null on the last page: page 1 was ['p5', 'p4', 'p3', 'p2', 'p1'], next_cursor None
+REGRESSION FAIL channels B2.5 a cursor issued by 8000 gives the same page on 8001 and 8002: no cursor from B2.4
+REGRESSION FAIL channels B2.6 a cursor still resumes from the same place after new messages arrive: no cursor from B2.4
+REGRESSION FAIL channels B2.7 limit defaults to 50 when omitted: got 52 messages
+REGRESSION FAIL channels B2.8 limit 0, 201, -1 or 'abc' returns 400; limit 200 is accepted: expected 400, got 200 {"messages": [{"id": 7, "channel_id": 19, "author_id": 27, "body": "p5", "pa...
+REGRESSION FAIL channels B2.9 a malformed or made-up cursor returns 400: expected 400, got 200 {"messages": [{"id": 7, "channel_id": 19, "author_id": 27, "body": "p5", "parent_id": null...
+REGRESSION FAIL channels B2.10 offset pagination is rejected: ?offset= or ?page= returns 400: expected 400, got 200 {"messages": [{"id": 7, "channel_id": 19, "author_id": 27, "body": "p5", "p...
+REGRESSION FAIL channels B2.11 replies: oldest-first and paged; parent reply_count counts them; replies stay out of the channel list: replies page 1 was ['r0', 'r1', 'r2']
+REGRESSION FAIL channels B3.1 POST /api/messages/{id}/pin: 200 {pin: {message_id, pinned_by, pinned_at}}; repeat is idempotent: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B3.2 GET pins: newest-first [{message, pinned_by, pinned_at}], paged with next_cursor; bad cursor 400: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B3.3 DELETE /api/messages/{id}/pin: 200 {unpinned: true}; the pin leaves the list: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B3.4 non-members of a private channel get 403 on its pin list: expected 403, got 404 404: Not Found
+REGRESSION FAIL channels B3.5 search: 200 {results, next_cursor} newest-first, case-insensitive, accessible channels only: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B3.6 search workspace_id=<id> limits results to that workspace: expected 200, got 404 404: Not Found
+REGRESSION FAIL channels B3.7 search pages with limit/cursor; limit=0 or a missing q returns 400: limit=1 should give one result and a cursor
+REGRESSION FAIL channels B4.4 every Spec B write kind is broadcast once, in order, each advancing event_id by exactly 1: expected ['message.reply', 'member.left', 'member.joined', 'channel.u...
+REGRESSION FAIL channels B4.5 no-op writes (join when joined, leave when left) emit no event: event_ids not consecutive from 12: member.left#12, member.joined#13, message.created#14
+REGRESSION FAIL channels B4.6 resume on another node replays events after since_event_id in order, sends 'resumed', then streams live: replayed message.created#2, message.created#3, message....
+REGRESSION: 34 broken

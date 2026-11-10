@@ -11,8 +11,8 @@ counts come from `analysis/transcript_stats.py` and `analysis/transcript_evidenc
 `analysis/*.json`).
 
 **Setup common to all 22 runs.**
-- **Spec.** The spec and checks were frozen before the first run, so Spec C and its checks are
-  identical in Runs 1.1, 2.1, 3, 4 and 5.x, and likewise for D and E. Every run's `/spec` includes
+- **Spec.** Spec C and its checks are identical in Runs 1.1, 2.1, 3, 4 and 5.x, and likewise for D
+  and E. Every run's `/spec` includes
   `common/ready.sh`, a submit gate: each complete check run records its result together with a
   fingerprint of the code in `/app`, and the gate prints `READY TO SUBMIT` only when every check has
   passed on the current code.
@@ -48,24 +48,26 @@ in brackets. "Submitted with failures?" uses the last result the agent itself sa
 | 2.2 | D | 2 | `jobs/2026-11-08__11-33-04` | D: 14 passed, 0 failed | $0.05 | 9 | No | None |
 | 2.3 | E | 1 | `jobs/2026-11-08__13-00-56` | E: 37 passed, 0 failed | $0.13 | 52 | No | None |
 | 2.3 | E | 2 | `jobs/2026-11-08__13-19-18` | E: 37 passed, 0 failed | $0.27 | 94 | No | Submitted while `ready.sh` listed four checks not rerun since its last edit |
-| 3 | C, D, E | 1 | `jobs/2026-11-08__14-51-24` | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.30 | 94 | No | None |
-| 3 | C, D, E | 2 | `jobs/2026-11-08__15-20-46` | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.14 | 55 | No | None |
-| 4 | C, D, E | 1 | `jobs/2026-11-08__15-37-08` | C: 15 passed, 19 failed; D: 3 passed, 11 failed; E: 13 passed, 24 failed | $0.32 | 71 | Yes (C.1, C.5, D.1, E.1, E.3, E.5, E.6) | Node 8001 does not come back after being killed, so most later checks find no cluster |
-| 4 | C, D, E | 2 | `jobs/2026-11-08__16-12-31` | C: 32 passed, 2 failed; D: 13 passed, 1 failed; E: 27 passed, 10 failed | $0.57 | 142 | Yes (C.1, E.1, E.5, E.6) | Spent 91 check runs on E, 87 of them failing |
-| 5.1 | A to E | 1 | `jobs/2026-11-08__19-25-38` | A and B: 7 broken; C: 33 passed, 1 failed; D: 14 passed, 0 failed; E: 26 passed, 11 failed | $0.44 | 120 (31) | Yes (regression, C.4, E.5, E.6) | Never brought the regression suite to `0 broken` (85 down to 7) |
-| 5.1 | A to E | 2 | `jobs/2026-11-08__19-59-01` | A and B: 47 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 35 passed, 2 failed | $0.33 | 98 (2) | Yes (regression, D.3, E.1, E.6) | Ran the regression suite only twice (70, 68 broken) and never returned to A and B |
-| 5.2 | A to E | 1 | `jobs/2026-11-08__18-24-52` | A and B: 0 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.51 | 148 (36) | No | None |
-| 5.2 | A to E | 2 | `jobs/2026-11-08__19-01-15` | A and B: 0 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.29 | 84 (18) | No | None |
-| 5.3 | A to E | 1 | `jobs/2026-11-08__16-59-11` | A: 48 passed, 0 failed; B: 52 passed, 0 failed; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 31 passed, 6 failed | $0.65 | 250 | Yes (E.6) | Building E.6 broke five A and B rules, which it found and fixed; submitted with E.6 failing |
-| 5.3 | A to E | 2 | `jobs/2026-11-08__17-51-13` | A: 48 passed, 0 failed; B: 52 passed, 0 failed; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.49 | 141 | No | None |
+| 3 | C, D, E | 1 | `jobs/2026-11-09__05-23-47` | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.26 | — | No | Breaks A and B (62 regression rules), which it was not asked to keep |
+| 3 | C, D, E | 2 | `jobs/2026-11-09__08-25-57` | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.22 | — | No | Breaks A and B (60 regression rules) |
+| 4 | C, D, E | 1 | `jobs/2026-11-09__08-45-19` | C: 4 passed, 30 failed; D: 14 passed, 0 failed; E: 19 passed, 18 failed | $0.32 | — | Yes | Cluster does not restart cleanly, so most later checks find no cluster |
+| 4 | C, D, E | 2 | `jobs/2026-11-09__09-08-41` | C: 34 passed, 0 failed; D: 11 passed, 3 failed; E: 27 passed, 10 failed | $0.81 | — | Yes | Spent most of its run on E without converging |
+| 5.1 | A to E | 1 | `jobs/2026-11-09__04-35-03` | A and B: 44 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 35 passed, 2 failed | $0.27 | — | Yes | Never brought the regression suite to `0 broken` |
+| 5.1 | A to E | 2 | `jobs/2026-11-09__05-01-25` | A and B: 34 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.29 | — | Yes | Never brought the regression suite to `0 broken` |
+| 5.2 | A to E | 1 | `jobs/2026-11-09__03-47-59` | A and B: 0 broken; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.39 | — | No | None |
+| 5.2 | A to E | 2 | `jobs/2026-11-09__04-14-20` | A and B: 10 broken; C: 1 passed, 33 failed; D: 13 passed, 1 failed; E: 3 passed, 34 failed | $0.12 | — | Yes | Submitted early, before C and E worked |
+| 5.3 | A to E | 1 | `jobs/2026-11-09__02-48-31` | A: 48 passed, 0 failed; B: 52 passed, 0 failed; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.37 | — | No | None |
+| 5.3 | A to E | 2 | `jobs/2026-11-09__03-13-53` | A: 48 passed, 0 failed; B: 52 passed, 0 failed; C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | $0.42 | — | No | None |
 
-No run crashed, timed out or hit the cost limit, and no agent wrote to `/spec`. Fifteen of the 22
-agents reached `READY TO SUBMIT` before submitting.
+No run crashed or hit the cost limit, and no agent wrote to `/spec`.
 
-Sixteen of the 22 apps pass every check of the components they were asked to build. For Run 5.3,
-repeat 2 passes all 185 rules, and repeat 1 passes everything except six E rules. Both Run 5.3 apps
-also pass all ten groups of a separate probe of COMPONENTS.md requirements that my checks do not test
-directly (`analysis/probe_components.py`, outputs in `analysis/probe/`).
+Runs 3, 4 and 5.x (and both Run 5.3 repeats) use the final spec, in which the UI lives in a single
+`static/app.js` and `start.sh` must start every service. Runs 1.x and 2.x use the previous
+revision, whose C and D text is the same; for E it differs only in how the UI code is organised. "Ran checks" is given only where transcript counts were recomputed.
+
+Both Run 5.3 apps pass all 185 rules of A to E with the regression suite at `0 broken`, and both pass
+all ten groups of a separate probe of COMPONENTS.md requirements (`analysis/probe_components.py`,
+outputs in `analysis/probe/`). Run 5.2 repeat 1 also passes all 185 rules.
 
 ## Experiments
 
@@ -149,43 +151,39 @@ the same checks and feedback mode, so the only difference is whether the written
 
 #### Supporting results
 
-| Repeat | Run | What the agent had | Check results | C + D + E passed | Cost | Model calls | Agent minutes | Failing check runs C / D / E |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 3 | specs + checks | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | 85 of 85 | $0.30 | 138 | 23.7 | 19 / 1 / 42 |
-| 1 | 4 | checks only | C: 15 passed, 19 failed; D: 3 passed, 11 failed; E: 13 passed, 24 failed | 31 of 85 | $0.32 | 155 | 28.8 | 25 / 4 / 32 |
-| 2 | 3 | specs + checks | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | 85 of 85 | $0.14 | 80 | 10.7 | 11 / 1 / 15 |
-| 2 | 4 | checks only | C: 32 passed, 2 failed; D: 13 passed, 1 failed; E: 27 passed, 10 failed | 72 of 85 | $0.57 | 212 | 40.8 | 25 / 9 / 87 |
+| Repeat | Run | What the agent had | Check results | C + D + E passed | Cost |
+| --- | --- | --- | --- | --- | --- |
+| 1 | 3 | specs + checks | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | 85 of 85 | $0.26 |
+| 1 | 4 | checks only | C: 4 passed, 30 failed; D: 14 passed, 0 failed; E: 19 passed, 18 failed | 37 of 85 | $0.32 |
+| 2 | 3 | specs + checks | C: 34 passed, 0 failed; D: 14 passed, 0 failed; E: 37 passed, 0 failed | 85 of 85 | $0.22 |
+| 2 | 4 | checks only | C: 34 passed, 0 failed; D: 11 passed, 3 failed; E: 27 passed, 10 failed | 72 of 85 | $0.81 |
 
 Behaviour outside the C, D and E checks (the A and B regression suite on the same apps; neither run
 was asked to build all of A and B):
 
 | Repeat | Run 3 | Run 4 |
 | --- | --- | --- |
-| 1 | 60 broken | 67 broken |
-| 2 | 57 broken | 67 broken |
+| 1 | 62 broken | regression suite could not start the cluster |
+| 2 | 60 broken | 66 broken |
 
 #### Answer
 
 No. With the written rules, both Run 3 apps pass all 85 C, D and E rules. With only the checks, Run 4
-finished at 31 and 72 of 85, using more model calls and more time. Both Run 4 agents submitted with
-checks still failing.
+finished at 37 and 72 of 85, at higher cost, and both Run 4 agents submitted with checks still failing.
 
 The difference is largest where the rules describe a design rather than a single response:
-- **Cluster supervision.** In repeat 1, node 8001 does not come back after being killed. That broke
-  most later checks, which found no cluster. `architecture.md` prescribes the supervisor that prevents
-  this.
-- **The browser UI (E.5, E.6).** Repeat 2 spent 91 E check runs, 87 of them failing, discovering the
-  expected UI structure one failing element at a time.
+- **Cluster supervision.** In repeat 1 the cluster does not restart cleanly, so most later checks find
+  no cluster. `architecture.md` prescribes the supervisor and the single `start.sh` that prevent this.
+- **The browser UI (E.5, E.6).** Without the spec, repeat 2 spent most of its run discovering the
+  expected UI structure one failing element at a time and finished with 10 E rules failing.
 
-Behaviour outside the checks is also worse without the spec, in both repeats: 67 A and B rules broken
-against 60 and 57. The checks can confirm that the rules are met, but they cannot replace the rules
-as the description of what to build.
+Behaviour outside the checks is also worse without the spec. The checks can confirm that the rules
+are met, but they cannot replace the rules as the description of what to build.
 
 #### Consistency across repeats
 
 The result is the same in both repeats. Run 3 passed everything both times; Run 4 fell short both
-times and was worse on behaviour outside the checks both times. The size of the shortfall varies (54
-and 13 rules missing), but its direction does not.
+times. The size of the shortfall varies (48 and 13 rules missing), but its direction does not.
 
 #### Other evidence
 
@@ -208,40 +206,39 @@ of them; only the number of components built in one run changes.
 
 | Component | Alone (2.x), repeats 1 / 2 | Together C to E (3), repeats 1 / 2 | Whole app A to E: 5.1, 5.2, 5.3 (repeat 1 / repeat 2) |
 | --- | --- | --- | --- |
-| C passed (of 34) | 34 / 0 | 34 / 34 | 33 / 34, 34 / 34, 34 / 34 |
-| D passed (of 14) | 14 / 14 | 14 / 14 | 14 / 14, 14 / 14, 14 / 14 |
-| E passed (of 37) | 37 / 37 | 37 / 37 | 26 / 35, 37 / 37, 31 / 37 |
+| C passed (of 34) | 34 / 0 | 34 / 34 | 34 / 34, 34 / 1, 34 / 34 |
+| D passed (of 14) | 14 / 14 | 14 / 14 | 14 / 14, 14 / 13, 14 / 14 |
+| E passed (of 37) | 37 / 37 | 37 / 37 | 35 / 37, 37 / 3, 37 / 37 |
 
 | Repeat | Alone: 2.1 + 2.2 + 2.3 | Together: Run 3 |
 | --- | --- | --- |
-| 1 | $0.24, 20.6 agent minutes | $0.30, 23.7 agent minutes |
-| 2 | $0.46, 31.0 agent minutes | $0.14, 10.7 agent minutes |
+| 1 | $0.24 | $0.26 |
+| 2 | $0.46 | $0.22 |
 
 #### Answer
 
 Not when building C, D and E together. Run 3 passed every C, D and E rule in both repeats, the same
-as building each component alone. The single exception in the "alone" column, C in 2.1 repeat 2, is
-the fresh-database defect described in question 1, not a scale effect.
+as building each component alone, and at similar or lower cost. The single exception in the "alone"
+column, C in 2.1 repeat 2, is the fresh-database defect described in question 1, not a scale effect.
 
-At the whole-app scale there is a moderate effect on the component built last. E, the final step,
-fell short in three of the six whole-app runs (26, 35 and 31 of 37). C and D passed everywhere except
-one C rule in 5.1 repeat 1. In those three runs the agent spent much of its effort on A and B first
-and reached the E browser steps with less attention left. All three submitted while E.6 still
-failed. So adding components did not make the agent build any one of them worse; at five components,
-the last one was sometimes left unfinished.
+At the whole-app scale the results depend on the run. Both Run 5.3 apps and 5.2 repeat 1 pass every
+C, D and E rule, and 5.1 repeat 2 passes all of them too. Two runs fell short: 5.1 repeat 1 left two
+E rules failing, and 5.2 repeat 2 submitted early, before C and E worked. So building more components
+in one run did not make the agent build any one of them worse in most runs; when it did fall short,
+it was on the components built last.
 
 #### Consistency across repeats
 
-The "together equals alone" result holds in both repeats. The whole-app E shortfall appears in both
-repeats (5.1 and 5.3 in repeat 1, 5.1 in repeat 2), but not in Run 5.2 at all. Cost does not point
-either way: building together was dearer in repeat 1 and cheaper in repeat 2.
+The "together equals alone" result holds in both repeats. At the whole-app scale, four of the six
+runs pass every C, D and E rule, including both Run 5.3 repeats; the two shortfalls are in different
+settings and different repeats.
 
 #### Other evidence
 
-- E.5 and E.6, the browser steps, account for most failing check runs in every setting, and they are
-  where every incomplete whole-app run stopped. How hard a run is depends mostly on how quickly the
-  agent gets the UI right.
-- D passed everywhere. The shared architecture (one database, delivery by polling) makes the
+- E.5 and E.6, the browser steps, are where most failing check runs occur. The final spec keeps the
+  whole UI in one `static/app.js` with one handler per control, and in these runs the agents that
+  reached E.6 finished it.
+- D passed almost everywhere. The shared architecture (one database, delivery by polling) makes the
   robustness rules hold once the cluster boots, whatever else is built alongside.
 
 ### 4) Regression
@@ -267,64 +264,45 @@ either way: building together was dearer in repeat 1 and cheaper in repeat 2.
 
 #### Supporting results
 
-| Run | Repeat | A and B first all passing (agent minute) | A/B check runs before / after that point | A and B rules that broke after passing | Final A and B (fresh container) | Cost |
-| --- | --- | --- | --- | --- | --- | --- |
-| 5.1 | 1 | never (85 broken at first, 7 at the end) | 35 / 0 (suite) | none observed | 7 broken | $0.44 |
-| 5.1 | 2 | never (70, then 68 broken) | 3 / 0 (suite) | none observed | 47 broken | $0.33 |
-| 5.2 | 1 | 28.7 | 37 / 1 (suite) | none after passing | 0 broken | $0.51 |
-| 5.2 | 2 | 7.2 | 18 / 1 (suite) | none after passing | 0 broken | $0.29 |
-| 5.3 | 1 | 7.9 | 41 / 48 (staged checks) | A3.8, A3.10, A3.11, A4.9, B2.11 while building E.6; all fixed | 0 broken | $0.65 |
-| 5.3 | 2 | 27.0 | 41 / 0 (staged checks) | none after passing | 0 broken | $0.49 |
+Final state of each whole-app run, measured in a fresh container:
 
-Regression-suite counts at each full suite run:
+| Run | Repeat | Final A and B (regression suite) | C, D, E passed (of 34, 14, 37) | Cost |
+| --- | --- | --- | --- | --- |
+| 5.1 | 1 | 44 broken | 34, 14, 35 | $0.27 |
+| 5.1 | 2 | 34 broken | 34, 14, 37 | $0.29 |
+| 5.2 | 1 | 0 broken | 34, 14, 37 | $0.39 |
+| 5.2 | 2 | 10 broken | 1, 13, 3 | $0.12 |
+| 5.3 | 1 | 0 broken (A 48/48, B 52/52) | 34, 14, 37 | $0.37 |
+| 5.3 | 2 | 0 broken (A 48/48, B 52/52) | 34, 14, 37 | $0.42 |
 
-| Run | Broken at each suite run |
-| --- | --- |
-| 5.1 repeat 1 | 85, 67, 58, 54, 53, 47, 37, 29, 28, 27, 26, 24, 20, 18, 14, 14, 15, 15, 15, 12, 11, 10, 10, 10, 10, 9, 9, 9, 8, 7, 7 |
-| 5.1 repeat 2 | 70, 68 |
-| 5.2 repeat 1 | 70, 56, 53, 49, 41, 37, 25, 25, 23, 21, 21, 21, 34, 20, 18, 17, 16, 14, 14, 14, 14, 14, 11, 11, 8, 7, 6, 5, 5, 4, 4, 3, 3, 3, 0, 0 |
-| 5.2 repeat 2 | 72, 61, 51, 41, 34, 25, 23, 33, 13, 10, 8, 9, 6, 5, 2, 1, 0, 0 |
+For comparison, Runs 3 and 4, which were told to build only the basics of A and B and were given no A
+and B checks, finish with 60 to 66 A and B regression rules broken.
 
 #### Answer
 
-a) Yes, sometimes. In 5.3 repeat 1, building the last UI step (E.6) broke five A and B rules that
-had been passing: three role and permission rules in A.3, one invitation rule in A.4, and one channel
-rule in B.2. The agent found them by re-running its A and B checks and fixed all five; the final app
-passes all 100 A and B rules. The suite counts also rise in three places (21 to 34 and 23 to 33 in
-5.2, 14 to 15 in 5.1), but each rise came before the agent had run any C, D or E check. Those were
-changes made while finishing A and B themselves, not breaks caused by C, D and E. So the breakage
-exists, but it is caught when the agent re-runs the A and B checks, and in every run that brought A
-and B to a passing state the final app still passes them.
+a) Building C, D and E puts A and B at risk, but the risk is controlled when the agent keeps re-running
+the A and B checks. In both Run 5.3 repeats and in 5.2 repeat 1 the final app passes all 100 A and B
+rules after C, D and E were built on top. Runs 3 and 4, which had no A and B checks, end with 60 to 66
+A and B rules broken, which shows how much of A and B is lost when nothing guards it.
 
-b) Yes, clearly. With Specs A and B (5.2), both runs brought the suite to `0 broken`, and both final
-apps pass every A and B rule. With only the regression suite (5.1), neither run did: the final apps
-have 7 and 47 broken. 5.1 repeat 1 worked the suite down from 85 broken to 7 over 31 runs and never
-finished. 5.1 repeat 2 ran the suite twice and moved on without returning. The failure messages name
-each broken rule and what was expected, but without the written rules the agent had to rebuild A and
-B one failure at a time, and that did not converge within the time it gave A and B.
+b) Yes, clearly. With Specs A and B (5.2), repeat 1 brought the suite to `0 broken` and repeat 2 ended
+with 10 broken after submitting early. With only the regression suite (5.1), both final apps have many
+more broken (44 and 34). The failure messages name each broken rule, but without the written rules the
+agent had to rebuild A and B one failure at a time, and that did not converge within the time it gave
+A and B.
 
-c) It made no difference to the outcome: all four 5.2 and 5.3 apps pass every A and B rule. It did
-change how the agents used the checks. With plain staged checks (5.3), repeat 1 kept re-running its A
-and B checks while it built C to E (48 runs after A and B first passed), and that is how it caught
-the five breaks in a). With the suite (5.2), both agents re-ran it once at the end. The suite is one
-command for all 100 rules, so it is cheaper to re-run, but in these runs the agents with plain checks
-re-checked more.
+c) The plain staged checks did at least as well. With plain A and B checks (5.3), both repeats pass
+every A and B rule and every C, D and E rule. With the regression suite (5.2), one repeat did the same
+and the other submitted early. The staged checks keep A and B in the same per-step loop the agent uses
+for C, D and E, which is why Run 5.3 is the setting whose spec I submit.
 
 #### Consistency across repeats
 
-All 22 runs used the same model access and settings, so the repeats are comparable.
-- b) holds in both repeats: 5.2 passed A and B both times, 5.1 failed both times.
-- The final result in c) holds in both repeats (all four apps at `0 broken`).
-- The A and B break in a) appeared in one of the two 5.3 repeats; the other built C to E without
-  breaking A or B.
-- Time to bring A and B to a passing state varied more within a setting than between settings (7.2
-  and 28.7 minutes with the suite, 7.9 and 27.0 with plain checks), so I draw no conclusion about
-  speed.
+All whole-app runs used the same model access and settings, so the repeats are comparable.
+- b) holds in both repeats: each 5.2 app has fewer A and B rules broken than either 5.1 app.
+- c) Run 5.3 gave a fully passing app in both repeats; Run 5.2 in one of two.
 
 #### Other evidence
 
-- The broken counts are not monotone even while the agent works only on A and B (for example 23, 33,
-  13 in 5.2 repeat 2). A fix for one rule often broke another, and the suite showed it at once.
-- Runs 3 and 4, which were told to build only the basics of A and B, finish with 57 to 67 A and B
-  rules broken. That shows how much of A and B the A and B checks or regression suite cause the agent
-  to build in the 5.x runs.
+- Runs 3 and 4 also show that the A and B regression rules test real behaviour: an app that passes
+  every C, D and E rule can still break more than half of them.
